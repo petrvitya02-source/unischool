@@ -1,0 +1,1725 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UNISCHOOL</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        /* --- 1. БАЗОВЫЕ ПЕРЕМЕННЫЕ И ТЕМЫ --- */
+        :root {
+            --bg-color: #f4f7f9;
+            --card-bg: #ffffff;
+            --sidebar-bg: #0f172a;
+            --sidebar-text: #94a3b8;
+            --sidebar-text-active: #ffffff;
+            --primary: #6366f1;
+            --primary-hover: #4f46e5;
+            --text-on-primary: #ffffff;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+            --green: #10b981;
+            --shadow-sm: 0 4px 6px -1px rgba(0,0,0,0.05);
+            --shadow-md: 0 10px 25px -5px rgba(0,0,0,0.05);
+            --radius: 20px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        body.theme-default { --bg-color: #f4f7f9; --sidebar-bg: #0f172a; --primary: #6366f1; --primary-hover: #4f46e5; }
+        body.theme-humanities { --bg-color: #fef2f2; --sidebar-bg: #450a0a; --primary: #ef4444; --primary-hover: #dc2626; --border: #fecaca; }
+        body.theme-chembio { --bg-color: #ecfdf5; --sidebar-bg: #064e3b; --primary: #10b981; --primary-hover: #059669; --border: #a7f3d0; }
+        body.theme-polytech { --bg-color: #f8fafc; --sidebar-bg: #000000; --primary: #facc15; --primary-hover: #eab308; --text-on-primary: #000000; --border: #e2e8f0; }
+        body.theme-rosneft { --bg-color: #f1f5f9; --sidebar-bg: #1e293b; --primary: #64748b; --primary-hover: #475569; --border: #cbd5e1; }
+        body.theme-engineers { --bg-color: #eff6ff; --sidebar-bg: #1e3a8a; --primary: #3b82f6; --primary-hover: #2563eb; --border: #bfdbfe; }
+        body.theme-physmath { --bg-color: #faf5ff; --sidebar-bg: #3b0764; --primary: #a855f7; --primary-hover: #9333ea; --border: #e9d5ff; }
+
+        /* --- 2. БАЗОВЫЕ СТИЛИ --- */
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body { background-color: var(--bg-color); color: var(--text-main); display: flex; height: 100vh; overflow: hidden; transition: background-color 0.4s; }
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
+
+        /* --- 3. ЛЕВОЕ МЕНЮ --- */
+        .sidebar { width: 260px; background-color: var(--sidebar-bg); color: white; display: flex; flex-direction: column; padding: 24px 20px; flex-shrink: 0; transition: var(--transition); box-shadow: 4px 0 24px rgba(0,0,0,0.1); z-index: 20; }
+        .logo { font-size: 22px; font-weight: 700; display: flex; align-items: center; gap: 12px; margin-bottom: 40px; padding-left: 8px; color: white; letter-spacing: -0.5px; }
+        .logo i { color: var(--primary); font-size: 26px; }
+        .nav-menu { display: flex; flex-direction: column; gap: 8px; flex: 1; }
+        .nav-link { color: var(--sidebar-text); text-decoration: none; padding: 14px 16px; border-radius: 14px; font-weight: 500; font-size: 15px; transition: var(--transition); cursor: pointer; display: flex; align-items: center; gap: 14px; }
+        .nav-link:hover { background-color: rgba(255, 255, 255, 0.08); color: var(--sidebar-text-active); transform: translateX(4px); }
+        .nav-link.active { background: linear-gradient(135deg, var(--primary), var(--primary-hover)); color: var(--text-on-primary); box-shadow: 0 8px 20px -6px var(--primary); font-weight: 600; }
+        .sidebar-bottom { margin-top: auto; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.1); display: flex; flex-direction: column; gap: 8px;}
+        .journal-btn { background-color: rgba(255, 255, 255, 0.08) !important; border: 1px solid rgba(255,255,255,0.1); }
+        .journal-btn:hover { background-color: rgba(255, 255, 255, 0.15) !important; transform: none !important; }
+
+        /* --- 4. ОСНОВНАЯ ОБЛАСТЬ И ШАПКА --- */
+        .main-wrapper { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+        .topbar { height: 80px; background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; padding: 0 32px; flex-shrink: 0; position: relative; z-index: 10; }
+        .topbar-left { display: flex; align-items: center; gap: 24px; }
+        .local-time { font-size: 15px; font-weight: 700; color: var(--primary); display: flex; align-items: center; gap: 8px; background: var(--bg-color); padding: 8px 16px; border-radius: 12px; transition: var(--transition); }
+        .local-date { font-size: 14px; color: var(--text-muted); font-weight: 500; margin-left: 8px; }
+        .topbar-right { display: flex; align-items: center; gap: 20px; }
+
+        .notif-container { position: relative; cursor: pointer; padding: 10px; display: flex; align-items: center; justify-content: center; border-radius: 12px; background: var(--card-bg); box-shadow: var(--shadow-sm); transition: var(--transition); }
+        .notif-container:hover { box-shadow: var(--shadow-md); transform: translateY(-2px); }
+        .notif-container i { font-size: 20px; color: var(--text-main); transition: color 0.2s; }
+        .notif-container:hover i { color: var(--primary); }
+        .notif-badge { position: absolute; top: -4px; right: -4px; background: #ef4444; color: white; font-size: 11px; font-weight: 700; width: 20px; height: 20px; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 2px solid var(--bg-color); }
+        .notif-dropdown { position: absolute; top: 60px; right: 0; width: 340px; background: var(--card-bg); border-radius: 20px; box-shadow: 0 20px 40px rgba(0,0,0,0.15); border: 1px solid var(--border); display: none; flex-direction: column; overflow: hidden; z-index: 100; transform-origin: top right; animation: scaleIn 0.2s ease-out; }
+        @keyframes scaleIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
+        .notif-dropdown.active { display: flex; }
+        .notif-header { padding: 16px 20px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; background: var(--bg-color); }
+        .notif-header h4 { font-size: 15px; font-weight: 700; color: var(--text-main); }
+        .notif-header button { background: none; border: none; font-size: 12px; color: var(--primary); cursor: pointer; font-weight: 600; }
+        .notif-list { list-style: none; max-height: 350px; overflow-y: auto; }
+        .notif-item { padding: 16px 20px; border-bottom: 1px solid var(--border); font-size: 14px; transition: background 0.2s; cursor: pointer; }
+        .notif-item:hover { background: var(--bg-color); }
+        .notif-item.unread { background: color-mix(in srgb, var(--primary) 5%, transparent); border-left: 4px solid var(--primary); }
+        .notif-item p { margin-bottom: 6px; color: var(--text-main); font-weight: 500; }
+        .notif-time { font-size: 12px; color: var(--text-muted); }
+
+        .profile { display: flex; align-items: center; gap: 12px; cursor: pointer; padding: 6px 16px 6px 6px; border-radius: 16px; background: var(--card-bg); box-shadow: var(--shadow-sm); transition: var(--transition); }
+        .profile:hover { box-shadow: var(--shadow-md); transform: translateY(-2px); }
+        .profile-avatar { width: 40px; height: 40px; border-radius: 12px; object-fit: cover; border: 2px solid var(--bg-color); }
+        .profile-info { display: flex; flex-direction: column; }
+        .profile-name { font-weight: 700; font-size: 14px; line-height: 1.2; color: var(--text-main); }
+        .profile-role { font-size: 12px; color: var(--primary); font-weight: 600; }
+
+        /* --- 5. СЕТКА И КАРТОЧКИ --- */
+        .content-area { flex: 1; padding: 24px; display: grid; grid-template-columns: 1.2fr 1fr 320px; gap: 24px; overflow: hidden; }
+        .col { display: flex; flex-direction: column; gap: 24px; height: 100%; overflow: hidden; }
+        .card { background: var(--card-bg); border-radius: var(--radius); padding: 24px; box-shadow: var(--shadow-sm); border: 1px solid var(--border); display: flex; flex-direction: column; flex: 1; min-height: 0; overflow: hidden; transition: var(--transition); }
+        .card:hover { box-shadow: var(--shadow-md); }
+        .flex-1-2 { flex: 1.2; }
+        .flex-auto { flex: 0 0 auto; }
+        .card-header-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-shrink: 0; }
+        .card-title { font-size: 18px; display: flex; align-items: center; gap: 12px; font-weight: 700; color: var(--text-main); letter-spacing: -0.3px; }
+        .card-title i { color: var(--primary); background: color-mix(in srgb, var(--primary) 15%, transparent); padding: 8px; border-radius: 10px; font-size: 16px; }
+        .btn-add { background: color-mix(in srgb, var(--primary) 15%, transparent); color: var(--primary); border: none; padding: 8px 16px; border-radius: 10px; font-weight: 700; font-size: 13px; cursor: pointer; display: none; align-items: center; gap: 6px; transition: var(--transition); flex-shrink: 0; }
+        .btn-add:hover { background: var(--primary); color: var(--text-on-primary); transform: translateY(-2px); }
+        .teacher-only { display: none; }
+        .scroll-area { flex: 1; overflow-y: auto; min-height: 0; padding-right: 8px; }
+
+        /* --- 6. ТАБЛИЦА РАСПИСАНИЯ (Главная) --- */
+        table { width: 100%; border-collapse: separate; border-spacing: 0 8px; }
+        th, td { padding: 14px; text-align: left; font-size: 14px; }
+        th { background-color: transparent; color: var(--text-muted); font-weight: 600; position: sticky; top: 0; z-index: 1; padding-top: 0; }
+        tbody tr { background: var(--bg-color); transition: var(--transition); }
+        tbody tr:hover { background: color-mix(in srgb, var(--primary) 8%, var(--card-bg)); transform: scale(1.01); box-shadow: var(--shadow-sm); }
+        tbody tr td:first-child { border-top-left-radius: 12px; border-bottom-left-radius: 12px; font-weight: 700; color: var(--primary); }
+        tbody tr td:last-child { border-top-right-radius: 12px; border-bottom-right-radius: 12px; }
+        .time-col { color: var(--text-main); font-weight: 600; font-size: 13px; white-space: nowrap; }
+        .btn-delete-small { background: none; border: none; color: #ef4444; cursor: pointer; padding: 6px; border-radius: 8px; transition: 0.2s; }
+        .btn-delete-small:hover { background: #fee2e2; }
+        .empty-state { text-align: center; padding: 30px 10px; color: var(--text-muted); display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; }
+        .empty-state i { font-size: 50px; color: var(--border); margin-bottom: 16px; display: block; }
+        .empty-state p { font-size: 15px; font-weight: 500; }
+
+        /* --- 7. МЕРОПРИЯТИЯ --- */
+        .events-grid { display: flex; flex-direction: column; gap: 16px; }
+        .event-item { display: flex; align-items: center; gap: 16px; padding: 16px; border-radius: 16px; background: var(--bg-color); flex-shrink: 0; transition: var(--transition); }
+        .event-item:hover { transform: translateX(4px); background: color-mix(in srgb, var(--primary) 5%, var(--bg-color)); }
+        .event-date-box { background: var(--card-bg); color: var(--text-main); padding: 10px 14px; border-radius: 12px; text-align: center; font-weight: 800; font-size: 18px; line-height: 1.1; box-shadow: var(--shadow-sm); }
+        .event-date-box span { display: block; font-size: 11px; color: var(--primary); text-transform: uppercase; margin-top: 2px; font-weight: 700; }
+        .event-info { flex: 1; }
+        .event-info h5 { font-size: 15px; font-weight: 700; margin-bottom: 4px; }
+        .event-info p { font-size: 13px; color: var(--text-muted); display: flex; align-items: center; gap: 6px; }
+        .event-countdown { font-size: 12px; padding: 6px 12px; border-radius: 20px; font-weight: 700; white-space: nowrap; }
+        .countdown-active { background: #dcfce7; color: #15803d; }
+        .countdown-finished { background: #fee2e2; color: #ef4444; }
+
+        /* --- 8. МИНИ-ЕЖЕДНЕВНИК --- */
+        .planner-form { display: flex; gap: 10px; margin-bottom: 16px; flex-wrap: wrap; flex-shrink: 0; }
+        .planner-form input { padding: 10px 14px; border: 1px solid var(--border); border-radius: 12px; font-size: 14px; outline: none; background: var(--bg-color); transition: var(--transition); color: var(--text-main); }
+        .planner-form input:focus { border-color: var(--primary); background: var(--card-bg); box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary) 20%, transparent); }
+        .planner-form input[type="time"] { width: 100px; }
+        .planner-form input[type="text"] { flex: 1; min-width: 150px; }
+        .planner-form button { padding: 10px 20px; background: var(--primary); color: var(--text-on-primary); border: none; border-radius: 12px; cursor: pointer; font-weight: 700; transition: var(--transition); }
+        .planner-form button:hover { background: var(--primary-hover); transform: translateY(-2px); }
+        .planner-list { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+        .planner-item { display: flex; align-items: center; gap: 12px; background: var(--bg-color); padding: 14px 16px; border-radius: 12px; font-size: 14px; border-left: 4px solid var(--primary); flex-shrink: 0; transition: var(--transition); }
+        .planner-item:hover { transform: translateX(4px); box-shadow: var(--shadow-sm); }
+        .planner-item.active-timer { border-left-color: var(--green); background: #ecfdf5; }
+        .planner-time { font-weight: 700; color: var(--primary); white-space: nowrap; }
+        .planner-item.active-timer .planner-time { color: var(--green); }
+        .planner-task { flex: 1; font-weight: 500; transition: 0.2s; }
+        .planner-task.completed { text-decoration: line-through; color: var(--text-muted); opacity: 0.6; }
+        .planner-delete { background: none; border: none; color: #ef4444; cursor: pointer; font-size: 16px; padding: 4px; }
+        .planner-checkbox { width: 18px; height: 18px; cursor: pointer; accent-color: var(--primary); }
+        .pulse-dot { width: 8px; height: 8px; background: var(--green); border-radius: 50%; display: inline-block; margin-right: 8px; animation: pulse 1.5s infinite; }
+        @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4); } 70% { box-shadow: 0 0 0 6px rgba(16, 185, 129, 0); } 100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); } }
+
+        /* --- 9. СОЦСЕТИ И ИНФО --- */
+        .social-list { display: flex; flex-direction: column; gap: 10px; }
+        .social-item { display: flex; align-items: center; gap: 14px; text-decoration: none; color: var(--text-main); padding: 12px; border-radius: 12px; font-size: 14px; font-weight: 500; transition: var(--transition); flex-shrink: 0; background: var(--bg-color); }
+        .social-item:hover { transform: translateX(4px); background: color-mix(in srgb, var(--primary) 8%, var(--bg-color)); color: var(--primary); }
+        .social-item i { font-size: 20px; width: 28px; text-align: center; }
+        .info-card { background: linear-gradient(135deg, var(--primary), var(--primary-hover)); color: var(--text-on-primary); border-radius: var(--radius); padding: 24px; flex-shrink: 0; position: relative; overflow: hidden; box-shadow: 0 10px 25px -5px var(--primary); }
+        .info-card::after { content: '\f135'; font-family: 'Font Awesome 6 Free'; font-weight: 900; position: absolute; right: -10px; bottom: -20px; font-size: 100px; opacity: 0.1; transform: rotate(-20deg); }
+        .info-card h4 { font-size: 18px; margin-bottom: 8px; font-weight: 800; }
+        .info-card p { font-size: 14px; opacity: 0.9; font-weight: 500; }
+
+        /* --- 10. ПОЛНЫЕ СТРАНИЦЫ --- */
+        #allEventsView, #settingsView, #yptView, #classView { display: none; flex-direction: column; overflow: hidden; }
+        .full-page-container { flex: 1; overflow-y: auto; padding-right: 12px; }
+        .full-event-card { background: var(--card-bg); border-radius: var(--radius); padding: 24px; margin-bottom: 20px; display: flex; gap: 24px; box-shadow: var(--shadow-sm); border-left: 6px solid var(--primary); transition: var(--transition); }
+        .full-event-card:hover { box-shadow: var(--shadow-md); transform: translateY(-2px); }
+        .full-event-date { background: var(--bg-color); padding: 16px 24px; border-radius: 16px; text-align: center; display: flex; flex-direction: column; justify-content: center; }
+        .full-event-date .day { font-size: 32px; font-weight: 800; color: var(--primary); line-height: 1; }
+        .full-event-date .month { font-size: 14px; color: var(--text-muted); text-transform: uppercase; margin-top: 4px; font-weight: 600; }
+        .full-event-details { flex: 1; display: flex; flex-direction: column; justify-content: center; }
+        .full-event-details h3 { font-size: 22px; margin-bottom: 12px; font-weight: 700; }
+        .full-event-details p { font-size: 15px; color: var(--text-muted); margin-bottom: 6px; display: flex; align-items: center; gap: 8px; }
+
+        /* --- 11. ЕЖЕДНЕВНИК (YPT) --- */
+        .ypt-layout { display: grid; grid-template-columns: 1.2fr 1fr; gap: 24px; height: 100%; }
+        .ypt-calendar { background: var(--card-bg); border-radius: var(--radius); padding: 24px; display: flex; flex-direction: column; box-shadow: var(--shadow-sm); border: 1px solid var(--border); }
+        .cal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .cal-header h3 { font-size: 22px; font-weight: 800; text-transform: capitalize; color: var(--text-main); }
+        .cal-nav { display: flex; gap: 12px; }
+        .cal-nav button { background: var(--bg-color); border: none; width: 40px; height: 40px; border-radius: 12px; cursor: pointer; color: var(--text-main); transition: var(--transition); display: flex; align-items: center; justify-content: center; }
+        .cal-nav button:hover { background: var(--primary); color: var(--text-on-primary); }
+        .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 10px; flex: 1; }
+        .cal-day-name { text-align: center; font-size: 13px; font-weight: 700; color: var(--text-muted); padding-bottom: 8px; }
+        
+        .cal-cell { background: var(--bg-color); border-radius: 12px; padding: 10px; display: flex; flex-direction: column; justify-content: space-between; min-height: 80px; border: 2px solid transparent; transition: var(--transition); cursor: pointer; }
+        .cal-cell:hover { transform: translateY(-2px); box-shadow: var(--shadow-sm); border-color: var(--border); }
+        .cal-cell.today { border-color: color-mix(in srgb, var(--primary) 50%, transparent); background: color-mix(in srgb, var(--primary) 5%, var(--card-bg)); }
+        .cal-cell.selected { border-color: var(--primary); background: color-mix(in srgb, var(--primary) 10%, var(--card-bg)); box-shadow: 0 0 0 2px color-mix(in srgb, var(--primary) 30%, transparent); }
+        .cal-cell.empty { background: transparent; cursor: default; border: none; }
+        .cal-cell.empty:hover { transform: none; box-shadow: none; }
+        .cal-date { font-size: 15px; font-weight: 700; color: var(--text-main); }
+        .cal-time { font-size: 12px; font-weight: 800; color: var(--text-on-primary); background: var(--primary); padding: 4px 8px; border-radius: 8px; text-align: center; margin-top: 6px; }
+        .cal-time.empty-time { background: transparent; color: var(--border); padding: 0; text-align: left; }
+        
+        .ypt-timer-section { background: var(--card-bg); border-radius: var(--radius); padding: 32px; display: flex; flex-direction: column; align-items: center; box-shadow: var(--shadow-sm); border: 1px solid var(--border); overflow-y: auto; }
+        .ypt-header-date { font-size: 20px; font-weight: 800; margin-bottom: 24px; color: var(--text-main); text-align: center; }
+        
+        .ypt-total-time { font-size: 15px; font-weight: 600; color: var(--text-muted); margin-bottom: 8px; }
+        .ypt-total-display { font-size: 56px; font-weight: 800; color: var(--text-main); margin-bottom: 32px; font-variant-numeric: tabular-nums; letter-spacing: -2px; }
+        
+        .active-timer-box { background: var(--bg-color); border: 2px solid var(--border); border-radius: 20px; padding: 24px; width: 100%; text-align: center; margin-bottom: 24px; transition: var(--transition); }
+        .active-timer-box.running { border-color: var(--primary); background: color-mix(in srgb, var(--primary) 5%, var(--bg-color)); box-shadow: 0 0 20px color-mix(in srgb, var(--primary) 20%, transparent); }
+        .timer-task-name { font-size: 18px; font-weight: 700; margin-bottom: 8px; color: var(--text-main); }
+        .timer-display { font-size: 42px; font-weight: 800; color: var(--primary); margin-bottom: 20px; font-variant-numeric: tabular-nums; letter-spacing: -1px; }
+        .timer-controls button { padding: 12px 32px; border-radius: 12px; border: none; font-weight: 700; cursor: pointer; font-size: 16px; transition: var(--transition); }
+        .btn-start { background: var(--green); color: white; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3); }
+        .btn-start:hover { background: #059669; transform: translateY(-2px); }
+        .btn-stop { background: #ef4444; color: white; box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3); }
+        .btn-stop:hover { background: #dc2626; transform: translateY(-2px); }
+        
+        .task-list { width: 100%; list-style: none; margin-top: 16px; }
+        .task-list li { display: flex; justify-content: space-between; align-items: center; padding: 16px; background: var(--bg-color); border-radius: 14px; margin-bottom: 10px; transition: var(--transition); border: 1px solid transparent; }
+        .task-list li:hover { transform: translateX(4px); border-color: var(--border); }
+        .task-list li.active-task { border: 1px solid var(--green); background: #ecfdf5; }
+        .task-info { display: flex; flex-direction: column; gap: 4px; flex: 1; }
+        .task-title { font-weight: 700; font-size: 15px; color: var(--text-main); transition: 0.2s; }
+        .task-title.completed { text-decoration: line-through; color: var(--text-muted); opacity: 0.6; }
+        .task-sub { font-size: 12px; color: var(--text-muted); font-weight: 500; }
+        .task-actions { display: flex; gap: 10px; }
+        .task-actions button { background: var(--primary); color: var(--text-on-primary); border: none; padding: 8px 16px; border-radius: 8px; cursor: pointer; font-size: 13px; font-weight: 700; transition: var(--transition); white-space: nowrap; }
+        .task-actions button:hover { background: var(--primary-hover); }
+        .task-actions button:disabled { background: var(--border); color: var(--text-muted); cursor: not-allowed; }
+        .task-actions .btn-del { background: #ef4444; color: white; }
+        .task-actions .btn-del:hover { background: #dc2626; }
+
+        /* --- 12. КЛАСС (ЧАТ И РЕЙТИНГ) --- */
+        .class-layout { display: grid; grid-template-columns: 1.5fr 1fr; gap: 24px; height: 100%; }
+        .chat-container { display: flex; flex-direction: column; height: 100%; background: var(--card-bg); border-radius: var(--radius); border: 1px solid var(--border); box-shadow: var(--shadow-sm); overflow: hidden; }
+        .chat-header { padding: 20px 24px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; background: var(--bg-color); flex-shrink: 0; }
+        .chat-header h3 { font-size: 18px; font-weight: 700; display: flex; align-items: center; gap: 10px; }
+        .chat-messages { flex: 1; padding: 24px; overflow-y: auto; display: flex; flex-direction: column; gap: 16px; background: var(--bg-color); }
+        
+        .chat-msg { display: flex; flex-direction: column; max-width: 80%; }
+        .chat-msg.mine { align-self: flex-end; align-items: flex-end; }
+        .chat-msg.other { align-self: flex-start; align-items: flex-start; }
+        .chat-author { font-size: 12px; font-weight: 600; color: var(--text-muted); margin-bottom: 4px; margin-left: 4px; }
+        .chat-bubble { padding: 12px 16px; border-radius: 16px; font-size: 14px; line-height: 1.4; word-break: break-word; }
+        .chat-msg.mine .chat-bubble { background: var(--primary); color: var(--text-on-primary); border-bottom-right-radius: 4px; }
+        .chat-msg.other .chat-bubble { background: var(--card-bg); color: var(--text-main); border-bottom-left-radius: 4px; box-shadow: var(--shadow-sm); }
+        .chat-time { font-size: 10px; color: var(--text-muted); margin-top: 4px; margin-right: 4px; }
+        
+        .chat-input-area { padding: 16px 24px; border-top: 1px solid var(--border); display: flex; gap: 12px; background: var(--card-bg); flex-shrink: 0; }
+        .chat-input-area input { flex: 1; padding: 14px 20px; border: 1px solid var(--border); border-radius: 24px; outline: none; font-size: 14px; background: var(--bg-color); color: var(--text-main); transition: var(--transition); }
+        .chat-input-area input:focus { border-color: var(--primary); background: var(--card-bg); box-shadow: 0 0 0 4px color-mix(in srgb, var(--primary) 20%, transparent); }
+        .chat-input-area button { background: var(--primary); color: var(--text-on-primary); border: none; width: 48px; height: 48px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 18px; transition: var(--transition); }
+        .chat-input-area button:hover { background: var(--primary-hover); transform: scale(1.05); }
+        .teacher-class-select { padding: 8px 16px; border-radius: 8px; border: 1px solid var(--border); background: var(--card-bg); color: var(--text-main); font-weight: 600; outline: none; cursor: pointer; }
+
+        .leaderboard-container { background: var(--card-bg); border-radius: var(--radius); padding: 24px; border: 1px solid var(--border); box-shadow: var(--shadow-sm); display: flex; flex-direction: column; overflow: hidden; }
+        .leaderboard-title { font-size: 20px; font-weight: 800; margin-bottom: 20px; display: flex; align-items: center; gap: 10px; }
+        .leaderboard-list { flex: 1; overflow-y: auto; list-style: none; display: flex; flex-direction: column; gap: 12px; }
+        
+        .lb-item { display: flex; align-items: center; gap: 16px; padding: 16px; border-radius: 16px; background: var(--bg-color); transition: var(--transition); border: 1px solid transparent; }
+        .lb-item:hover { transform: translateX(4px); }
+        .lb-item.top-1 { background: linear-gradient(135deg, #fef08a, #fde047); border-color: #eab308; color: #713f12; }
+        .lb-item.top-2 { background: linear-gradient(135deg, #e5e7eb, #d1d5db); border-color: #9ca3af; color: #374151; }
+        .lb-item.top-3 { background: linear-gradient(135deg, #fed7aa, #fdba74); border-color: #f97316; color: #7c2d12; }
+        
+        .lb-rank { font-size: 20px; font-weight: 800; width: 30px; text-align: center; }
+        .lb-avatar { width: 40px; height: 40px; border-radius: 12px; object-fit: cover; border: 2px solid var(--card-bg); }
+        .lb-info { flex: 1; }
+        .lb-name { font-weight: 700; font-size: 15px; }
+        .lb-score { font-weight: 800; font-size: 16px; color: var(--primary); }
+        .lb-item.top-1 .lb-score, .lb-item.top-2 .lb-score, .lb-item.top-3 .lb-score { color: inherit; }
+
+        /* --- 13. НАСТРОЙКИ --- */
+        .settings-section { background: var(--card-bg); padding: 24px; border-radius: var(--radius); margin-bottom: 24px; border: 1px solid var(--border); box-shadow: var(--shadow-sm); }
+        .settings-section h3 { margin-bottom: 20px; font-size: 18px; display: flex; align-items: center; gap: 12px; font-weight: 700; color: var(--text-main); }
+        .settings-section h3 i { color: var(--primary); background: color-mix(in srgb, var(--primary) 15%, transparent); padding: 8px; border-radius: 10px; }
+        .theme-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 16px; }
+        .theme-option { border: 2px solid var(--border); border-radius: 16px; padding: 16px; cursor: pointer; text-align: center; transition: var(--transition); background: var(--bg-color); display: flex; flex-direction: column; align-items: center; gap: 12px; }
+        .theme-option:hover { transform: translateY(-4px); box-shadow: var(--shadow-md); }
+        .theme-option.active { border-color: var(--primary); background: color-mix(in srgb, var(--primary) 5%, var(--card-bg)); box-shadow: 0 0 0 4px color-mix(in srgb, var(--primary) 20%, transparent); }
+        .theme-colors { display: flex; gap: 8px; }
+        .theme-color-circle { width: 24px; height: 24px; border-radius: 50%; border: 2px solid white; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .theme-name { font-size: 14px; font-weight: 700; color: var(--text-main); }
+
+        /* --- 14. АВТОРИЗАЦИЯ И МОДАЛКИ --- */
+        .auth-screen { position: fixed; inset: 0; background: var(--sidebar-bg); display: flex; justify-content: center; align-items: center; z-index: 1000; transition: var(--transition); }
+        .auth-box { background: var(--card-bg); padding: 48px; border-radius: 32px; width: 100%; max-width: 440px; text-align: center; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5); }
+        .auth-box h2 { margin-bottom: 24px; color: var(--text-main); font-size: 28px; font-weight: 800; }
+        .auth-input { width: 100%; padding: 16px; margin-bottom: 16px; border: 1px solid var(--border); border-radius: 14px; font-size: 16px; outline: none; transition: var(--transition); background: var(--bg-color); color: var(--text-main); }
+        .auth-input:focus { border-color: var(--primary); background: var(--card-bg); box-shadow: 0 0 0 4px color-mix(in srgb, var(--primary) 20%, transparent); }
+        .auth-select { width: 100%; padding: 16px; margin-bottom: 16px; border: 1px solid var(--border); border-radius: 14px; font-size: 16px; outline: none; background: var(--bg-color); color: var(--text-main); cursor: pointer; }
+        .avatar-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 24px; }
+        .avatar-option { width: 100%; aspect-ratio: 1; border-radius: 16px; cursor: pointer; border: 3px solid transparent; transition: var(--transition); object-fit: cover; background: var(--bg-color); padding: 4px; }
+        .avatar-option:hover { transform: scale(1.1); }
+        .avatar-option.selected { border-color: var(--primary); box-shadow: 0 0 0 4px color-mix(in srgb, var(--primary) 20%, transparent); }
+        .btn-submit { width: 100%; padding: 16px; background: var(--primary); color: var(--text-on-primary); border: none; border-radius: 14px; font-size: 16px; font-weight: 700; cursor: pointer; transition: var(--transition); box-shadow: 0 4px 12px color-mix(in srgb, var(--primary) 40%, transparent); }
+        .btn-submit:hover { background: var(--primary-hover); transform: translateY(-2px); }
+        .btn-logout { width: 100%; padding: 16px; background: #ef4444; color: white; border: none; border-radius: 14px; font-size: 16px; font-weight: 700; cursor: pointer; margin-top: 12px; transition: var(--transition); }
+        .btn-logout:hover { background: #dc2626; }
+
+        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.6); display: none; justify-content: center; align-items: center; z-index: 1001; backdrop-filter: blur(8px); }
+        .modal-overlay.active { display: flex; animation: fadeIn 0.3s ease-out; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .modal-box { background: var(--card-bg); padding: 40px; border-radius: 24px; width: 100%; max-width: 520px; position: relative; max-height: 90vh; overflow-y: auto; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25); animation: slideUp 0.3s ease-out; }
+        @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        .modal-close { position: absolute; top: 20px; right: 20px; background: var(--bg-color); border: none; width: 36px; height: 36px; border-radius: 50%; font-size: 18px; cursor: pointer; color: var(--text-muted); transition: var(--transition); display: flex; align-items: center; justify-content: center; }
+        .modal-close:hover { background: #fee2e2; color: #ef4444; transform: rotate(90deg); }
+        .modal-label { font-size: 14px; color: var(--text-muted); margin-bottom: 8px; display: block; text-align: left; font-weight: 600; }
+        .form-row { display: flex; gap: 16px; margin-bottom: 16px; }
+        .form-row input { flex: 1; padding: 14px; border: 1px solid var(--border); border-radius: 12px; outline: none; font-size: 14px; background: var(--bg-color); color: var(--text-main); transition: var(--transition); }
+        .form-row input:focus { border-color: var(--primary); background: var(--card-bg); box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary) 20%, transparent); }
+        
+        #app { display: none; width: 100%; height: 100vh; }
+
+        /* =========================================================
+           СТИЛИ ДЛЯ ВКЛАДКИ "РАСПИСАНИЕ"
+           ========================================================= */
+        #scheduleView {
+            display: none;
+            flex-direction: column;
+            background-color: #f4f7fb;
+            padding: 24px 32px;
+            overflow-y: auto;
+            height: 100%;
+        }
+        
+        .sched-header-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
+        .sched-title-area { display: flex; align-items: center; gap: 16px; }
+        .sched-title-area h1 { font-size: 28px; font-weight: 800; color: #1e293b; letter-spacing: -0.5px; }
+        .sched-badge { background: #e0e7ff; color: #4338ca; padding: 6px 14px; border-radius: 20px; font-size: 13px; font-weight: 700; }
+        
+        .sched-controls { display: flex; gap: 12px; align-items: center; }
+        .sched-date-picker { 
+            background: #fff; padding: 10px 16px; border-radius: 16px; font-weight: 600; color: #1e293b; 
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02); display: flex; align-items: center; gap: 12px; 
+            cursor: pointer; border: 1px solid #e2e8f0; font-size: 14px; user-select: none;
+        }
+        .sched-btn-today { 
+            background: #2563eb; color: #fff; padding: 10px 24px; border-radius: 16px; font-weight: 600; 
+            border: none; cursor: pointer; transition: 0.2s; font-size: 14px;
+        }
+        .sched-btn-today:hover { background: #1d4ed8; }
+        
+        .grade-toggle { display: flex; background: #e2e8f0; border-radius: 12px; padding: 4px; margin-bottom: 24px; width: fit-content; }
+        .grade-btn { padding: 8px 24px; border: none; background: transparent; border-radius: 8px; font-weight: 700; font-size: 15px; color: #64748b; cursor: pointer; transition: 0.2s; }
+        .grade-btn.active { background: #fff; color: #1e293b; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+
+        .profiles-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 24px; }
+        .profile-card { background: #fff; border-radius: 24px; padding: 24px; box-shadow: 0 4px 20px rgba(0,0,0,0.03); border: 1px solid #e2e8f0; display: flex; flex-direction: column; height: 100%; }
+        .profile-card-header { display: flex; align-items: flex-start; gap: 16px; margin-bottom: 20px; padding-bottom: 20px; border-bottom: 1px solid #f1f5f9; }
+        .class-badge-large { width: 48px; height: 48px; border-radius: 14px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 16px; flex-shrink: 0; }
+        
+        .badge-gum { background: #fce7f3; color: #db2777; } 
+        .badge-bh { background: #dcfce7; color: #16a34a; }  
+        .badge-pth { background: #ffedd5; color: #ea580c; } 
+        .badge-rn { background: #fef08a; color: #ca8a04; }  
+        .badge-inj { background: #e0e7ff; color: #4f46e5; } 
+        .badge-fm { background: #e0f2fe; color: #0284c7; }  
+
+        .profile-info h4 { font-size: 16px; font-weight: 800; color: #1e293b; margin-bottom: 4px; line-height: 1.3; }
+        .profile-info p { font-size: 13px; color: #64748b; line-height: 1.4; }
+        .profile-room { background: #f8fafc; border: 1px solid #e2e8f0; color: #64748b; font-size: 12px; font-weight: 600; padding: 4px 10px; border-radius: 8px; margin-left: auto; flex-shrink: 0; }
+
+        .lesson-list { display: flex; flex-direction: column; gap: 8px; flex: 1; }
+        .lesson-row { display: flex; align-items: center; gap: 12px; padding: 12px 14px; border-radius: 12px; background: #f8fafc; transition: 0.2s; border: 1px solid transparent; }
+        .lesson-row:hover { background: #f1f5f9; }
+        .lesson-row.highlighted { background: #eff6ff; border-color: #bfdbfe; }
+        .lesson-num { width: 24px; height: 24px; border-radius: 8px; background: #fff; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 800; color: #64748b; flex-shrink: 0; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
+        .lesson-row.highlighted .lesson-num { background: #dbeafe; color: #2563eb; }
+        .lesson-subject { flex: 1; font-size: 14px; font-weight: 600; color: #1e293b; line-height: 1.3; }
+        .lesson-time { font-size: 12px; font-weight: 600; color: #94a3b8; white-space: nowrap; }
+        .lesson-row.highlighted .lesson-time { color: #3b82f6; }
+        .no-lessons { text-align: center; padding: 24px 0; color: #94a3b8; font-size: 14px; font-weight: 500; }
+    </style>
+</head>
+<body class="theme-default">
+
+    <!-- ЭКРАН РЕГИСТРАЦИИ -->
+    <div class="auth-screen" id="authScreen">
+        <div class="auth-box">
+            <h2>UNISCHOOL</h2>
+            <input type="text" id="regName" class="auth-input" placeholder="Введите ваше имя">
+            
+            <select id="regRole" class="auth-select" onchange="toggleClassSelect()">
+                <option value="student">Я ученик</option>
+                <option value="teacher">Я учитель (Админ)</option>
+            </select>
+
+            <select id="regClass" class="auth-select">
+                <option value="10 БХ">10 БХ</option>
+                <option value="10 ГУМ">10 ГУМ</option>
+                <option value="10 ФМ">10 ФМ</option>
+                <option value="10 ИНЖ">10 ИНЖ</option>
+                <option value="10 ПТХ">10 ПТХ</option>
+                <option value="10 РН">10 РН</option>
+            </select>
+
+            <label class="modal-label" style="text-align: center; margin-bottom: 16px;">Выберите аватарку:</label>
+            <div class="avatar-grid" id="regAvatarGrid"></div>
+            <button class="btn-submit" onclick="registerUser()">Войти в систему</button>
+        </div>
+    </div>
+
+    <!-- ОСНОВНОЙ САЙТ -->
+    <div id="app">
+        <aside class="sidebar">
+            <div class="logo"><i class="fa-solid fa-graduation-cap"></i> UNISCHOOL</div>
+            
+            <nav class="nav-menu">
+                <a href="#" class="nav-link active" id="navHome"><i class="fa-solid fa-house"></i> Главная</a>
+                <a href="#" class="nav-link" id="navScheduleNew"><i class="fa-solid fa-table-cells-large"></i> Расписание</a>
+                <a href="#" class="nav-link" id="navClass"><i class="fa-solid fa-users"></i> Мой класс</a>
+                <a href="#" class="nav-link" id="navYpt"><i class="fa-solid fa-stopwatch"></i> Ежедневник</a>
+                <a href="#" class="nav-link" id="navEvents"><i class="fa-regular fa-star"></i> Мероприятия</a>
+                <a href="#" class="nav-link" id="navSettings"><i class="fa-solid fa-gear"></i> Настройки</a>
+            </nav>
+
+            <div class="sidebar-bottom">
+                <a href="https://sgo.e-yakutia.ru" target="_blank" class="nav-link journal-btn">
+                    <i class="fa-solid fa-book"></i> Электронный журнал
+                </a>
+            </div>
+        </aside>
+
+        <div class="main-wrapper">
+            <header class="topbar">
+                <div class="topbar-left">
+                    <div class="local-time"><i class="fa-regular fa-clock"></i> <span id="clockTime">00:00:00</span></div>
+                    <div class="local-date" id="clockDate"></div>
+                </div>
+                
+                <div class="topbar-right">
+                    <div class="notif-container" onclick="toggleNotifications(event)">
+                        <i class="fa-regular fa-bell" id="bellIcon"></i>
+                        <span class="notif-badge" id="notifBadge" style="display:none;">0</span>
+                        <div class="notif-dropdown" id="notifDropdown">
+                            <div class="notif-header">
+                                <h4>Уведомления</h4>
+                                <button onclick="clearAllNotifs(event)">Очистить</button>
+                            </div>
+                            <ul class="notif-list" id="notifList"></ul>
+                        </div>
+                    </div>
+
+                    <div class="profile" onclick="openProfileModal()">
+                        <div class="profile-info">
+                            <span class="profile-name" id="topbarName">Ученик</span>
+                            <span class="profile-role" id="topbarRole">Ученик</span>
+                        </div>
+                        <img src="" alt="avatar" class="profile-avatar" id="topbarAvatar">
+                    </div>
+                </div>
+            </header>
+
+            <!-- ================= ГЛАВНЫЙ ДАШБОРД ================= -->
+            <main class="content-area" id="dashboardView">
+                <div class="col">
+                    <div class="card flex-1">
+                        <div class="card-header-row">
+                            <h2 id="rasp" class="card-title"><i class="fa-regular fa-calendar-days"></i> Расписание на сегодня</h2>
+                            <button class="btn-add teacher-only" onclick="openAddScheduleModal('main')"><i class="fa-solid fa-plus"></i> Добавить</button>
+                        </div>
+                        <div class="scroll-area" id="scheduleWrapper"></div>
+                    </div>
+                </div>
+
+                <div class="col">
+                    <div class="card flex-1-2">
+                        <div class="card-header-row">
+                            <h2 id="events" class="card-title"><i class="fa-regular fa-star"></i> Ближайшие мероприятия</h2>
+                            <button class="btn-add teacher-only" onclick="openAddEventModal()"><i class="fa-solid fa-plus"></i> Создать</button>
+                        </div>
+                        <div class="scroll-area">
+                            <div class="events-grid" id="eventsContainer"></div>
+                        </div>
+                    </div>
+
+                    <div class="card flex-1">
+                        <div class="card-header-row">
+                            <h2 class="card-title"><i class="fa-solid fa-pen-to-square"></i> Мой мини-ежедневник (на сегодня)</h2>
+                        </div>
+                        <div class="planner-form">
+                            <input type="time" id="taskStart" value="10:00">
+                            <span style="align-self: center; color: var(--text-muted);">-</span>
+                            <input type="time" id="taskEnd" value="11:00">
+                            <input type="text" id="taskText" placeholder="Что нужно сделать?">
+                            <button onclick="addTaskFromHome()"><i class="fa-solid fa-plus"></i></button>
+                        </div>
+                        <div class="scroll-area">
+                            <ul class="planner-list" id="plannerList"></ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col">
+                    <div class="card flex-1">
+                        <div class="card-header-row">
+                            <h2 id="obyavl" class="card-title"><i class="fa-solid fa-bullhorn"></i> Объявления</h2>
+                        </div>
+                        <div class="scroll-area">
+                            <div class="empty-state"><i class="fa-regular fa-folder-open"></i><p>Ой, здесь пусто</p></div>
+                        </div>
+                    </div>
+
+                    <div class="card flex-1">
+                        <div class="card-header-row">
+                            <h3 id="soc" class="card-title"><i class="fa-solid fa-link"></i> Соцсети</h3>
+                        </div>
+                        <div class="scroll-area">
+                            <div class="social-list">
+                                <a href="https://vk.com" target="_blank" class="social-item"><i class="fa-brands fa-vk" style="color: #0077FF;"></i> VK</a>
+                                <a href="https://t.me/eeeng56" target="_blank" class="social-item"><i class="fa-brands fa-telegram" style="color: #2AABEE;"></i> Telegram</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="info-card flex-auto">
+                        <h4>UNISCHOOL</h4>
+                        <p>Все самое важное в одном месте</p>
+                    </div>
+                </div>
+            </main>
+
+            <!-- ================= НОВАЯ СТРАНИЦА РАСПИСАНИЯ ================= -->
+            <main class="content-area" id="scheduleView" style="grid-template-columns: 1fr;">
+                <div style="padding: 24px; width: 100%;">
+                    <div class="sched-header-top">
+                        <div class="sched-title-area">
+                            <h1>Расписание</h1>
+                            <span class="sched-badge">6 профилей</span>
+                        </div>
+                        <div class="sched-controls">
+                            <div class="sched-date-picker" id="schedDateDisplay">
+                                <!-- JS заполнит дату -->
+                            </div>
+                            <button class="sched-btn-today" onclick="goToTodaySchedule()">Сегодня</button>
+                            <button class="btn-add teacher-only" onclick="openAddScheduleModal('new')" style="background: #2563eb; color: #fff; padding: 10px 20px; border-radius: 16px; font-size: 14px; box-shadow: 0 4px 12px rgba(37,99,235,0.3);"><i class="fa-solid fa-plus"></i> Добавить урок</button>
+                        </div>
+                    </div>
+
+                    <div class="grade-toggle">
+                        <button class="grade-btn active" id="btnGrade10" onclick="switchGrade('10')">10 классы</button>
+                        <button class="grade-btn" id="btnGrade11" onclick="switchGrade('11')">11 классы</button>
+                    </div>
+
+                    <div class="profiles-grid" id="profilesGrid">
+                        <!-- Генерируется через JS -->
+                    </div>
+                </div>
+            </main>
+
+            <!-- ================= СТРАНИЦА КЛАССА (ЧАТ И РЕЙТИНГ) ================= -->
+            <main class="content-area" id="classView" style="grid-template-columns: 1fr;">
+                <div class="class-layout">
+                    <div class="chat-container">
+                        <div class="chat-header">
+                            <h3><i class="fa-solid fa-comments" style="color: var(--primary)"></i> Чат класса: <span id="chatClassName">10 А</span></h3>
+                            <select id="teacherClassSelect" class="teacher-class-select teacher-only" onchange="changeTeacherChat(this.value)">
+                                <option value="10 БХ">10 БХ</option>
+                                <option value="10 ГУМ">10 ГУМ</option>
+                                <option value="10 ФМ">10 ФМ</option>
+                                <option value="10 ИНЖ">10 ИНЖ</option>
+                                <option value="10 ПТХ">10 ПТХ</option>
+                                <option value="10 РН">10 РН</option>
+                            </select>
+                        </div>
+                        <div class="chat-messages" id="chatMessages"></div>
+                        <div class="chat-input-area">
+                            <input type="text" id="chatInput" placeholder="Написать сообщение..." onkeypress="handleChatEnter(event)">
+                            <button onclick="sendChatMessage()"><i class="fa-solid fa-paper-plane"></i></button>
+                        </div>
+                    </div>
+
+                    <div class="leaderboard-container">
+                        <div class="leaderboard-title"><i class="fa-solid fa-trophy" style="color: #eab308;"></i> Рейтинг учебы</div>
+                        <ul class="leaderboard-list" id="leaderboardList"></ul>
+                    </div>
+                </div>
+            </main>
+
+            <!-- ================= СТРАНИЦА ЕЖЕДНЕВНИКА (YPT КАЛЕНДАРЬ) ================= -->
+            <main class="content-area" id="yptView" style="grid-template-columns: 1fr;">
+                <div class="ypt-layout">
+                    <div class="ypt-calendar">
+                        <div class="cal-header">
+                            <h3 id="calMonthYear">Ноябрь 2024</h3>
+                            <div class="cal-nav">
+                                <button onclick="changeMonth(-1)"><i class="fa-solid fa-chevron-left"></i></button>
+                                <button onclick="changeMonth(1)"><i class="fa-solid fa-chevron-right"></i></button>
+                            </div>
+                        </div>
+                        <div class="cal-grid" id="calGrid">
+                            <div class="cal-day-name">Пн</div><div class="cal-day-name">Вт</div><div class="cal-day-name">Ср</div>
+                            <div class="cal-day-name">Чт</div><div class="cal-day-name">Пт</div><div class="cal-day-name">Сб</div><div class="cal-day-name">Вс</div>
+                        </div>
+                    </div>
+
+                    <div class="ypt-timer-section">
+                        <div class="ypt-header-date" id="yptSelectedDateDisplay">Задачи на сегодня</div>
+                        
+                        <div class="ypt-total-time">Всего за этот день:</div>
+                        <div class="ypt-total-display" id="totalTimeDisplay">0ч 00м</div>
+
+                        <div class="active-timer-box" id="activeTimerBox">
+                            <div class="timer-task-name" id="timerTaskName">Выберите задачу</div>
+                            <div class="timer-display" id="timerDisplay">00:00:00</div>
+                            <div class="timer-controls" id="timerControls">
+                                <button class="btn-start" disabled>Старт</button>
+                            </div>
+                        </div>
+
+                        <div style="width: 100%; margin-bottom: 16px;">
+                            <div class="form-row" style="margin-bottom: 0;">
+                                <input type="text" id="newYptTask" placeholder="Добавить задачу на этот день...">
+                                <button onclick="addYptTask()" style="background: var(--primary); color: var(--text-on-primary); border: none; padding: 0 20px; border-radius: 12px; cursor: pointer; font-weight: 700; transition: var(--transition);"><i class="fa-solid fa-plus"></i></button>
+                            </div>
+                        </div>
+                        <ul class="task-list" id="yptTaskList"></ul>
+                    </div>
+                </div>
+            </main>
+
+            <!-- ================= СТРАНИЦА МЕРОПРИЯТИЙ ================= -->
+            <main class="content-area" id="allEventsView" style="grid-template-columns: 1fr;">
+                <div class="card" style="padding: 32px;">
+                    <div class="card-header-row" style="margin-bottom: 32px;">
+                        <h2 class="card-title" style="font-size: 28px;"><i class="fa-regular fa-star"></i> Все мероприятия школы</h2>
+                        <button class="btn-add teacher-only" onclick="openAddEventModal()" style="font-size: 15px; padding: 12px 24px;"><i class="fa-solid fa-plus"></i> Создать</button>
+                    </div>
+                    <div class="full-page-container" id="fullEventsContainer"></div>
+                </div>
+            </main>
+
+            <!-- ================= СТРАНИЦА НАСТРОЕК ================= -->
+            <main class="content-area" id="settingsView" style="grid-template-columns: 1fr;">
+                <div class="full-page-container">
+                    <div class="settings-section">
+                        <h3><i class="fa-solid fa-palette"></i> Цветовая тема</h3>
+                        <div class="theme-grid" id="themeGrid"></div>
+                    </div>
+                    <div class="settings-section">
+                        <h3><i class="fa-solid fa-language"></i> Язык</h3>
+                        <select id="langSelect" class="auth-input" style="max-width: 320px; margin-bottom: 0;" onchange="changeLanguage()">
+                            <option value="ru">Русский</option>
+                            <option value="sah">Якутский (в разработке)</option>
+                        </select>
+                    </div>
+                    <div class="settings-section">
+                        <h3><i class="fa-solid fa-envelope"></i> Связь с учителями</h3>
+                        <div id="studentMessageForm" style="display: none; margin-bottom: 24px;">
+                            <textarea id="messageText" placeholder="Ваш вопрос..." style="width: 100%; padding: 16px; border-radius: 12px; border: 1px solid var(--border); outline: none; min-height: 100px; resize: vertical; font-family: inherit; margin-bottom: 12px; background: var(--bg-color); color: var(--text-main);"></textarea>
+                            <button class="btn-submit" style="width: auto; padding: 12px 24px;" onclick="sendMessage()"><i class="fa-solid fa-paper-plane"></i> Отправить</button>
+                        </div>
+                        <div id="messagesList"></div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- МОДАЛКИ -->
+    <div class="modal-overlay" id="addScheduleModal">
+        <div class="modal-box" style="max-height: 90vh; overflow-y: auto;">
+            <button class="modal-close" onclick="closeModal('addScheduleModal')"><i class="fa-solid fa-xmark"></i></button>
+            <h3 style="margin-bottom: 8px; font-size: 22px; font-weight: 800;">Добавить урок</h3>
+            <p style="margin-bottom: 24px; color: var(--text-muted); font-size: 14px;">Дата: <b id="modalScheduleDate"></b></p>
+            
+            <div class="form-row">
+                <div style="flex: 1;"><label class="modal-label">Урок (№)</label>
+                    <select id="schPair" class="auth-input" style="margin-bottom:0; padding: 14px; background: var(--bg-color); border-radius: 12px; border: 1px solid var(--border);">
+                        <option value="1">1 (8:15-8:55)</option><option value="2">2 (9:00-9:45)</option>
+                        <option value="3">3 (10:15-11:00)</option><option value="4">4 (11:05-11:50)</option>
+                        <option value="5">5 (12:00-12:45)</option><option value="6">6 (12:50-13:35)</option>
+                        <option value="7">7 (14:30-15:25)</option><option value="8">8 (15:35-16:20)</option>
+                    </select>
+                </div>
+            </div>
+            
+            <h4 style="margin-bottom: 12px; margin-top: 24px; font-size: 16px; color: var(--text-muted);">10 классы</h4>
+            <div class="form-row">
+                <div style="flex: 2;"><label class="modal-label">10 ГУМ</label><input type="text" id="schGum" placeholder="Литература"></div>
+                <div><label class="modal-label">10 БХ</label><input type="text" id="schBh" placeholder="Химия"></div>
+            </div>
+            <div class="form-row">
+                <div><label class="modal-label">10 ПТХ</label><input type="text" id="schPth" placeholder="Информатика"></div>
+                <div><label class="modal-label">10 РН</label><input type="text" id="schRn" placeholder="Физика"></div>
+            </div>
+            <div class="form-row">
+                <div><label class="modal-label">10 ИНЖ</label><input type="text" id="schInj" placeholder="Робототехника"></div>
+                <div><label class="modal-label">10 ФМ</label><input type="text" id="schFm" placeholder="Геометрия"></div>
+            </div>
+
+            <h4 style="margin-bottom: 12px; margin-top: 24px; font-size: 16px; color: var(--text-muted);">11 классы</h4>
+            <div class="form-row">
+                <div style="flex: 2;"><label class="modal-label">11 ГУМ</label><input type="text" id="schGum11" placeholder="История"></div>
+                <div><label class="modal-label">11 БХ</label><input type="text" id="schBh11" placeholder="Биология"></div>
+            </div>
+            <div class="form-row">
+                <div><label class="modal-label">11 ПТХ</label><input type="text" id="schPth11" placeholder="Алгебра"></div>
+                <div><label class="modal-label">11 РН</label><input type="text" id="schRn11" placeholder="Химия"></div>
+            </div>
+            <div class="form-row">
+                <div><label class="modal-label">11 ИНЖ</label><input type="text" id="schInj11" placeholder="3D-моделирование"></div>
+                <div><label class="modal-label">11 ФМ</label><input type="text" id="schFm11" placeholder="Физика"></div>
+            </div>
+
+            <button class="btn-submit" onclick="saveSchedule()" style="margin-top: 24px;">Сохранить</button>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="addEventModal">
+        <div class="modal-box">
+            <button class="modal-close" onclick="closeModal('addEventModal')"><i class="fa-solid fa-xmark"></i></button>
+            <h3 style="margin-bottom: 24px; font-size: 22px; font-weight: 800;">Создать мероприятие</h3>
+            <label class="modal-label">Название</label>
+            <input type="text" id="evTitle" class="auth-input" placeholder="Школьный концерт">
+            <div class="form-row">
+                <div><label class="modal-label">Дата</label><input type="date" id="evDate" class="auth-input" style="margin-bottom: 0;"></div>
+                <div><label class="modal-label">Время</label><input type="time" id="evTime" class="auth-input" style="margin-bottom: 0;"></div>
+            </div>
+            <label class="modal-label" style="margin-top: 16px;">Место</label>
+            <input type="text" id="evPlace" class="auth-input" placeholder="Актовый зал">
+            <button class="btn-submit" onclick="saveEvent()">Опубликовать</button>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="profileModal">
+        <div class="modal-box">
+            <button class="modal-close" onclick="closeModal('profileModal')"><i class="fa-solid fa-xmark"></i></button>
+            <h3 style="text-align: center; margin-bottom: 24px; font-size: 22px; font-weight: 800;">Настройки профиля</h3>
+            <label class="modal-label">Имя:</label>
+            <input type="text" id="editName" class="auth-input">
+            <label class="modal-label">Аватарка:</label>
+            <div class="avatar-grid" id="editAvatarGrid"></div>
+            <button class="btn-submit" onclick="saveProfile()">Сохранить</button>
+            <button class="btn-logout" onclick="logout()">Выйти</button>
+        </div>
+    </div>
+
+    <!-- ================= FIREBASE INIT ================= -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/13.3.0/firebase-app.js";
+        import { getFirestore, collection, addDoc, onSnapshot, query, where, deleteDoc, doc, updateDoc, getDocs } from "https://www.gstatic.com/firebasejs/13.3.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyAjsP2RWZRkVWmXKolQFIBu69NIHesKSUY",
+            authDomain: "unischool-a0dd4.firebaseapp.com",
+            projectId: "unischool-a0dd4",
+            storageBucket: "unischool-a0dd4.firebasestorage.app",
+            messagingSenderId: "204137254164",
+            appId: "1:204137254164:web:54ceff68bb3bb43be08601",
+            measurementId: "G-9X5PTPT3R7"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // Делаем доступным глобально для основного скрипта
+        window.db = db;
+        window.fb = {
+            collection, addDoc, onSnapshot, query, where, deleteDoc, doc, updateDoc, getDocs
+        };
+
+        // Запускаем основной скрипт после загрузки Firebase
+        window.dispatchEvent(new Event('firebaseReady'));
+    </script>
+
+    <!-- ================= ОСНОВНОЙ СКРИПТ ================= -->
+    <script>
+        // --- ГЛОБАЛЬНЫЕ БАЗЫ ДАННЫХ ---
+        const avatars = [
+            'https://api.dicebear.com/7.x/avataaars/svg?seed=Felix', 'https://api.dicebear.com/7.x/avataaars/svg?seed=Aneka',
+            'https://api.dicebear.com/7.x/avataaars/svg?seed=Max', 'https://api.dicebear.com/7.x/avataaars/svg?seed=Alisa',
+            'https://api.dicebear.com/7.x/avataaars/svg?seed=Jack', 'https://api.dicebear.com/7.x/avataaars/svg?seed=Mia',
+            'https://api.dicebear.com/7.x/avataaars/svg?seed=Leo', 'https://api.dicebear.com/7.x/avataaars/svg?seed=Luna'
+        ];
+        let selectedRegAvatar = avatars[0];
+        let selectedEditAvatar = avatars[0];
+        let currentUser = null;
+        let currentChatClass = "10 БХ";
+
+        let allUsers = JSON.parse(localStorage.getItem('unischolAllUsers')) || {};
+        let allYptData = JSON.parse(localStorage.getItem('unischolAllYptData')) || {};
+        
+        // Данные из Firebase
+        let scheduleData = [];
+        let eventsData = [];
+        let chatData = {};
+        let allTasksData = {};
+
+        let selectedYptDate = getLocalDateString();
+
+        const bellSchedule = { 1: '8:15-8:55', 2: '9:00-9:45', 3: '10:15-11:00', 4: '11:05-11:50', 5: '12:00-12:45', 6: '12:50-13:35', 7: '14:30-15:25', 8: '15:35-16:20' };
+
+        function getLocalDateString(date = new Date()) {
+            const offset = date.getTimezoneOffset() * 60000;
+            return new Date(date.getTime() - offset).toISOString().split('T')[0];
+        }
+
+        // Ждем инициализации Firebase
+        window.addEventListener('firebaseReady', () => {
+            listenToSchedule();
+            listenToEvents();
+            listenToChats();
+            listenToTasks();
+            checkLogin();
+        });
+
+        // Слушатели
+        function listenToSchedule() {
+            const { collection, onSnapshot } = window.fb;
+            onSnapshot(collection(window.db, "schedule"), (snapshot) => {
+                scheduleData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                renderSchedule();
+                renderProfilesGrid();
+            });
+        }
+
+        function listenToEvents() {
+            const { collection, onSnapshot } = window.fb;
+            onSnapshot(collection(window.db, "events"), (snapshot) => {
+                eventsData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                renderEvents();
+                renderFullEvents();
+            });
+        }
+
+        function listenToChats() {
+            const { collection, onSnapshot } = window.fb;
+            onSnapshot(collection(window.db, "chats"), (snapshot) => {
+                chatData = {};
+                snapshot.forEach(doc => {
+                    const data = doc.data();
+                    if (!chatData[data.className]) chatData[data.className] = [];
+                    chatData[data.className].push(data);
+                });
+                // Сортируем по времени
+                for(let cls in chatData) {
+                     chatData[cls].sort((a,b) => a.timestamp - b.timestamp);
+                }
+                renderChat();
+            });
+        }
+
+        function listenToTasks() {
+            const { collection, onSnapshot } = window.fb;
+            onSnapshot(collection(window.db, "tasks"), (snapshot) => {
+                allTasksData = {};
+                snapshot.forEach((doc) => {
+                    const task = doc.data();
+                    if (!allTasksData[task.date]) allTasksData[task.date] = [];
+                    allTasksData[task.date].push({ id: doc.id, ...task });
+                });
+                renderHomeTasks();
+                renderYptTasks();
+                renderCalendar();
+            });
+        }
+
+        function toggleClassSelect() {
+            const role = document.getElementById('regRole').value;
+            document.getElementById('regClass').style.display = role === 'student' ? 'block' : 'none';
+        }
+
+        // --- УВЕДОМЛЕНИЯ ---
+        let notificationsData = JSON.parse(localStorage.getItem('unischolNotifs')) || [];
+        function addNotification(text, icon = 'fa-info-circle') {
+            notificationsData.unshift({ id: Date.now(), text, icon, time: new Date().toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' }), read: false });
+            if (notificationsData.length > 15) notificationsData.pop();
+            localStorage.setItem('unischolNotifs', JSON.stringify(notificationsData));
+            renderNotifications();
+        }
+        function renderNotifications() {
+            const list = document.getElementById('notifList');
+            const badge = document.getElementById('notifBadge');
+            const bell = document.getElementById('bellIcon');
+            const unreadCount = notificationsData.filter(n => !n.read).length;
+            if (unreadCount > 0) {
+                badge.textContent = unreadCount; badge.style.display = 'flex';
+                bell.className = 'fa-solid fa-bell'; bell.style.color = 'var(--primary)';
+            } else {
+                badge.style.display = 'none'; bell.className = 'fa-regular fa-bell'; bell.style.color = 'var(--text-main)';
+            }
+            if (notificationsData.length === 0) { list.innerHTML = '<li style="padding: 30px; text-align: center; color: var(--text-muted); font-size: 14px;">Нет уведомлений</li>'; return; }
+            list.innerHTML = notificationsData.map(n => `<li class="notif-item ${n.read ? '' : 'unread'}" onclick="markAsRead(${n.id})"><p><i class="fa-solid ${n.icon}" style="margin-right: 8px; color: var(--primary);"></i> ${n.text}</p><span class="notif-time">${n.time}</span></li>`).join('');
+        }
+        function toggleNotifications(e) { e.stopPropagation(); document.getElementById('notifDropdown').classList.toggle('active'); }
+        document.addEventListener('click', (e) => {
+            const dropdown = document.getElementById('notifDropdown');
+            if (dropdown.classList.contains('active') && !e.target.closest('.notif-container')) dropdown.classList.remove('active');
+        });
+        function markAsRead(id) {
+            notificationsData = notificationsData.map(n => { if (n.id === id) n.read = true; return n; });
+            localStorage.setItem('unischolNotifs', JSON.stringify(notificationsData));
+            renderNotifications();
+        }
+        function clearAllNotifs(e) { e.stopPropagation(); notificationsData = []; localStorage.setItem('unischolNotifs', JSON.stringify(notificationsData)); renderNotifications(); }
+
+        // --- ТЕМЫ ---
+        const themes = [
+            { id: 'default', name: 'По умолчанию', primary: '#6366f1', bg: '#0f172a' },
+            { id: 'humanities', name: 'Гуманитарии', primary: '#ef4444', bg: '#450a0a' },
+            { id: 'chembio', name: 'Химбио', primary: '#10b981', bg: '#064e3b' },
+            { id: 'polytech', name: 'Политехи', primary: '#facc15', bg: '#000000' },
+            { id: 'rosneft', name: 'Роснефть', primary: '#64748b', bg: '#1e293b' },
+            { id: 'engineers', name: 'Инженеры', primary: '#3b82f6', bg: '#1e3a8a' },
+            { id: 'physmath', name: 'Физматы', primary: '#a855f7', bg: '#3b0764' }
+        ];
+        function initThemes() {
+            const savedTheme = localStorage.getItem('unischolTheme') || 'default';
+            document.body.className = `theme-${savedTheme}`;
+            const grid = document.getElementById('themeGrid');
+            grid.innerHTML = themes.map(t => `
+                <div class="theme-option ${savedTheme === t.id ? 'active' : ''}" onclick="setTheme('${t.id}', this)">
+                    <div class="theme-colors"><div class="theme-color-circle" style="background: ${t.primary};"></div><div class="theme-color-circle" style="background: ${t.bg};"></div></div>
+                    <div class="theme-name">${t.name}</div>
+                </div>
+            `).join('');
+        }
+        function setTheme(themeId, element) {
+            document.body.className = `theme-${themeId}`;
+            localStorage.setItem('unischolTheme', themeId);
+            document.querySelectorAll('.theme-option').forEach(el => el.classList.remove('active'));
+            element.classList.add('active');
+        }
+
+        // --- АВТОРИЗАЦИЯ ---
+        function renderAvatars(containerId, selectedUrl, callback) {
+            const container = document.getElementById(containerId);
+            container.innerHTML = '';
+            avatars.forEach(url => {
+                const img = document.createElement('img');
+                img.src = url; img.className = 'avatar-option';
+                if (url === selectedUrl) img.classList.add('selected'); 
+                img.onclick = () => { container.querySelectorAll('.avatar-option').forEach(el => el.classList.remove('selected')); img.classList.add('selected'); callback(url); };
+                container.appendChild(img);
+            });
+        }
+        renderAvatars('regAvatarGrid', selectedRegAvatar, (url) => selectedRegAvatar = url);
+        renderAvatars('editAvatarGrid', selectedEditAvatar, (url) => selectedEditAvatar = url);
+
+        function registerUser() {
+            const name = document.getElementById('regName').value.trim();
+            const role = document.getElementById('regRole').value;
+            const userClass = document.getElementById('regClass').value;
+            if (!name) { alert('Введите имя!'); return; }
+            
+            allUsers[name] = { name, avatar: selectedRegAvatar, role, class: userClass };
+            localStorage.setItem('unischolAllUsers', JSON.stringify(allUsers));
+            
+            localStorage.setItem('unischolUser', JSON.stringify({ name, avatar: selectedRegAvatar, role, class: userClass }));
+            checkLogin();
+        }
+
+        function checkLogin() {
+            const savedUser = localStorage.getItem('unischolUser');
+            if (savedUser) {
+                currentUser = JSON.parse(savedUser);
+                document.getElementById('authScreen').style.display = 'none';
+                document.getElementById('app').style.display = 'flex';
+                document.getElementById('topbarName').textContent = currentUser.name;
+                document.getElementById('topbarRole').textContent = currentUser.role === 'teacher' ? 'Учитель' : `Ученик (${currentUser.class})`;
+                document.getElementById('topbarAvatar').src = currentUser.avatar;
+                document.getElementById('editName').value = currentUser.name;
+                selectedEditAvatar = currentUser.avatar;
+                renderAvatars('editAvatarGrid', selectedEditAvatar, (url) => selectedEditAvatar = url);
+                
+                if (currentUser.role === 'teacher') {
+                    document.querySelectorAll('.teacher-only').forEach(el => el.style.display = 'flex');
+                } else {
+                    document.querySelectorAll('.teacher-only').forEach(el => el.style.display = 'none');
+                }
+                
+                renderNotifications(); updateClockAndReset(); updateEventCountdowns();
+                initYpt();
+                initSettings();
+                updateNewScheduleDate();
+                switchGrade('10');
+                
+                renderHomeTasks();
+                renderYptTasks();
+                renderCalendar();
+            } else {
+                document.getElementById('authScreen').style.display = 'flex';
+                document.getElementById('app').style.display = 'none';
+            }
+        }
+        function logout() { localStorage.removeItem('unischolUser'); location.reload(); }
+        function openProfileModal() { document.getElementById('profileModal').classList.add('active'); }
+        function closeModal(id) { document.getElementById(id).classList.remove('active'); }
+        function saveProfile() {
+            const newName = document.getElementById('editName').value.trim();
+            if (!newName) { alert('Имя не может быть пустым!'); return; }
+            
+            delete allUsers[currentUser.name];
+            currentUser.name = newName; currentUser.avatar = selectedEditAvatar;
+            allUsers[newName] = currentUser;
+            localStorage.setItem('unischolAllUsers', JSON.stringify(allUsers));
+            localStorage.setItem('unischolUser', JSON.stringify(currentUser));
+            
+            document.getElementById('topbarName').textContent = newName;
+            document.getElementById('topbarAvatar').src = selectedEditAvatar;
+            closeModal('profileModal');
+        }
+
+        // --- РАСПИСАНИЕ ---
+        let selectedDate = getLocalDateString(); 
+        
+        function renderSchedule() {
+            const wrapper = document.getElementById('scheduleWrapper');
+            const todayStr = getLocalDateString();
+            const todaySchedule = scheduleData.filter(item => item.date === todayStr);
+
+            if (todaySchedule.length === 0) { wrapper.innerHTML = `<div class="empty-state"><i class="fa-regular fa-folder-open"></i><p>Ой, здесь пусто</p></div>`; return; }
+            
+            let html = `<table><thead><tr><th>Урок</th><th>Время</th><th>10 ГУМ</th><th>10 БХ</th><th>10 ПТХ</th><th>10 РН</th><th>10 ИНЖ</th><th>10 ФМ</th>${currentUser && currentUser.role === 'teacher' ? '<th></th>' : ''}</tr></thead><tbody>`;
+            todaySchedule.sort((a, b) => a.pair - b.pair).forEach((item) => {
+                const timeRange = bellSchedule[item.pair] || '-';
+                html += `<tr><td>${item.pair}</td><td class="time-col">${timeRange}</td><td>${item.gum || '-'}</td><td>${item.bh || '-'}</td><td>${item.pth || '-'}</td><td>${item.rn || '-'}</td><td>${item.inj || '-'}</td><td>${item.fm || '-'}</td>${currentUser && currentUser.role === 'teacher' ? `<td><button class="btn-delete-small" onclick="deleteSchedule('${item.id}')"><i class="fa-solid fa-trash"></i></button></td>` : ''}</tr>`;
+            });
+            html += `</tbody></table>`; wrapper.innerHTML = html;
+        }
+
+        const profilesInfo = {
+            'gum': { letter: 'А', name: 'Гуманитарный', desc: 'История, литература, право', room: '201', badgeClass: 'badge-gum' },
+            'bh':  { letter: 'Б', name: 'Биолого-химический', desc: 'Химия, биология, медицина', room: '304', badgeClass: 'badge-bh' },
+            'pth': { letter: 'В', name: 'Политехнический', desc: 'Математика, информатика, физика', room: '214', badgeClass: 'badge-pth' },
+            'rn':  { letter: 'Г', name: 'Роснефть', desc: 'Профильный «Роснефть-класс»', room: '310', badgeClass: 'badge-rn' },
+            'inj': { letter: 'Д', name: 'Инженерный', desc: '3D-моделирование, робототехника', room: '112', badgeClass: 'badge-inj' },
+            'fm':  { letter: 'Е', name: 'Физико-математический', desc: 'Олимпиадная математика и физика', room: '315', badgeClass: 'badge-fm' }
+        };
+
+        let currentGrade = '10';
+
+        function switchGrade(grade) {
+            currentGrade = grade;
+            document.getElementById('btnGrade10').classList.toggle('active', grade === '10');
+            document.getElementById('btnGrade11').classList.toggle('active', grade === '11');
+            renderProfilesGrid();
+        }
+
+        function renderProfilesGrid() {
+            const grid = document.getElementById('profilesGrid');
+            if(!grid) return;
+            grid.innerHTML = '';
+            const order = ['gum', 'bh', 'pth', 'rn', 'inj', 'fm'];
+            const filteredData = scheduleData.filter(item => item.date === selectedDate);
+
+            order.forEach(profileKey => {
+                const info = profilesInfo[profileKey];
+                const classPrefix = currentGrade === '10' ? '' : '11';
+                const dataKey = profileKey + classPrefix;
+
+                let lessonsHtml = '';
+                let lessonCount = 0;
+                const sortedData = [...filteredData].sort((a, b) => parseInt(a.pair) - parseInt(b.pair));
+
+                sortedData.forEach(item => {
+                    if (item[dataKey] && item[dataKey].trim() !== '') {
+                        lessonCount++;
+                        const time = bellSchedule[item.pair] || '';
+                        const timeFormatted = time.replace(/(\d):/g, '0$1:').replace(/:(\d)(?=\D|$)/g, ':0$1');
+                        const isHighlighted = item.pair == '3' ? 'highlighted' : ''; 
+
+                        lessonsHtml += `
+                            <div class="lesson-row ${isHighlighted}">
+                                <div class="lesson-num">${item.pair}</div>
+                                <div class="lesson-subject">${item[dataKey]}</div>
+                                <div class="lesson-time">${timeFormatted}</div>
+                            </div>
+                        `;
+                    }
+                });
+
+                if (lessonCount === 0) { lessonsHtml = `<div class="no-lessons">Нет уроков на этот день</div>`; }
+
+                grid.innerHTML += `
+                    <div class="profile-card">
+                        <div class="profile-card-header">
+                            <div class="class-badge-large ${info.badgeClass}">${currentGrade}${info.letter}</div>
+                            <div class="profile-info">
+                                <h4>${currentGrade} ${info.name} (${info.letter})</h4>
+                                <p>${info.desc}</p>
+                            </div>
+                            <div class="profile-room">Каб. ${info.room}</div>
+                        </div>
+                        <div class="lesson-list">${lessonsHtml}</div>
+                    </div>
+                `;
+            });
+        }
+
+        function changeSelectedDate(offset) {
+            let d = new Date(selectedDate);
+            d.setDate(d.getDate() + offset);
+            selectedDate = getLocalDateString(d);
+            updateNewScheduleDate();
+            renderProfilesGrid();
+        }
+
+        function goToTodaySchedule() {
+            selectedDate = getLocalDateString();
+            updateNewScheduleDate();
+            renderProfilesGrid();
+        }
+
+        function updateNewScheduleDate() {
+            const d = new Date(selectedDate);
+            const dayMonth = d.toLocaleDateString('ru-RU', { day: 'numeric', month: 'long' });
+            document.getElementById('schedDateDisplay').innerHTML = `
+                <i class="fa-solid fa-chevron-left" style="font-size: 12px; color: #94a3b8; cursor: pointer; padding: 4px;" onclick="changeSelectedDate(-1)"></i>
+                ${dayMonth}
+                <i class="fa-solid fa-chevron-right" style="font-size: 12px; color: #94a3b8; cursor: pointer; padding: 4px;" onclick="changeSelectedDate(1)"></i>
+            `;
+        }
+
+        function openAddScheduleModal(source = 'main') { 
+            let targetDate = getLocalDateString();
+            if (source === 'new') targetDate = selectedDate;
+            const d = new Date(targetDate);
+            document.getElementById('modalScheduleDate').textContent = d.toLocaleDateString('ru-RU', { weekday: 'long', day: 'numeric', month: 'long' });
+            document.getElementById('addScheduleModal').dataset.targetDate = targetDate; 
+            document.getElementById('addScheduleModal').classList.add('active'); 
+        }
+        
+        function saveSchedule() {
+            const targetDate = document.getElementById('addScheduleModal').dataset.targetDate || getLocalDateString();
+            const newLesson = { 
+                date: targetDate, 
+                pair: document.getElementById('schPair').value, 
+                gum: document.getElementById('schGum').value, bh: document.getElementById('schBh').value, 
+                pth: document.getElementById('schPth').value, rn: document.getElementById('schRn').value, 
+                inj: document.getElementById('schInj').value, fm: document.getElementById('schFm').value,
+                gum11: document.getElementById('schGum11').value, bh11: document.getElementById('schBh11').value,
+                pth11: document.getElementById('schPth11').value, rn11: document.getElementById('schRn11').value,
+                inj11: document.getElementById('schInj11').value, fm11: document.getElementById('schFm11').value
+            };
+            
+            const { collection, addDoc } = window.fb;
+            addDoc(collection(window.db, "schedule"), newLesson).then(() => {
+                closeModal('addScheduleModal'); 
+                addNotification(`Добавлен ${newLesson.pair}-й урок на ${targetDate}.`, 'fa-calendar-plus');
+                document.querySelectorAll('#addScheduleModal input').forEach(input => input.value = '');
+            }).catch(e => alert("Ошибка: " + e.message));
+        }
+        
+        function deleteSchedule(id) {
+            if(confirm('Удалить этот урок?')) {
+                const { doc, deleteDoc } = window.fb;
+                deleteDoc(doc(window.db, "schedule", id)).then(() => {
+                    addNotification(`Урок удален из расписания.`, 'fa-calendar-xmark');
+                });
+            }
+        }
+
+        // --- МЕРОПРИЯТИЯ ---
+        let eventTimers = [];
+        function renderEvents() {
+            const container = document.getElementById('eventsContainer');
+            if (eventsData.length === 0) { container.innerHTML = `<div class="empty-state"><i class="fa-regular fa-folder-open"></i><p>Ой, здесь пусто</p></div>`; return; }
+            const sorted = [...eventsData].sort((a, b) => new Date(a.date + 'T' + a.time) - new Date(b.date + 'T' + b.time));
+            container.innerHTML = sorted.map((ev) => {
+                const d = new Date(ev.date + 'T' + ev.time); const day = d.getDate(); const month = d.toLocaleString('ru-RU', { month: 'short' });
+                return `<div class="event-item"><div class="event-date-box">${day} <span>${month}</span></div><div class="event-info"><h5>${ev.title}</h5><p><i class="fa-regular fa-clock"></i> ${ev.place} · ${ev.time}</p></div><div class="event-countdown countdown-active" id="timer-${ev.id}">Загрузка...</div>${currentUser && currentUser.role === 'teacher' ? `<button class="btn-delete-small" onclick="deleteEvent('${ev.id}')"><i class="fa-solid fa-trash"></i></button>` : ''}</div>`;
+            }).join('');
+            eventTimers = eventsData.map((ev) => ({ id: `timer-${ev.id}`, target: new Date(ev.date + 'T' + ev.time).getTime() }));
+            updateEventCountdowns();
+        }
+        function renderFullEvents() {
+            const container = document.getElementById('fullEventsContainer');
+            if (eventsData.length === 0) { container.innerHTML = `<div class="empty-state"><i class="fa-regular fa-folder-open"></i><p>За всю историю школы еще не было мероприятий</p></div>`; return; }
+            const sortedEvents = [...eventsData].sort((a, b) => new Date(a.date + 'T' + a.time) - new Date(b.date + 'T' + b.time));
+            container.innerHTML = sortedEvents.map(ev => {
+                const d = new Date(ev.date + 'T' + ev.time); const day = d.getDate(); const month = d.toLocaleString('ru-RU', { month: 'short' }); const year = d.getFullYear();
+                return `<div class="full-event-card"><div class="full-event-date"><div class="day">${day}</div><div class="month">${month} ${year}</div></div><div class="full-event-details"><h3>${ev.title}</h3><p><i class="fa-solid fa-location-dot" style="color:var(--primary)"></i> Место: ${ev.place}</p><p><i class="fa-regular fa-clock" style="color:var(--primary)"></i> Время: ${ev.time}</p></div>${currentUser && currentUser.role === 'teacher' ? `<button class="btn-delete-small" onclick="deleteEvent('${ev.id}')" style="align-self: center;"><i class="fa-solid fa-trash" style="font-size: 20px;"></i></button>` : ''}</div>`;
+            }).join('');
+        }
+        function openAddEventModal() { document.getElementById('addEventModal').classList.add('active'); }
+        function saveEvent() {
+            const title = document.getElementById('evTitle').value.trim(); const date = document.getElementById('evDate').value; const time = document.getElementById('evTime').value; const place = document.getElementById('evPlace').value.trim();
+            if (!title || !date || !time) { alert('Заполните название, дату и время!'); return; }
+            
+            const { collection, addDoc } = window.fb;
+            addDoc(collection(window.db, "events"), { title, date, time, place }).then(() => {
+                closeModal('addEventModal'); 
+                addNotification(`Новое мероприятие: "${title}"`, 'fa-star');
+                document.querySelectorAll('#addEventModal input').forEach(input => input.value = '');
+            });
+        }
+        function deleteEvent(id) {
+            if(confirm('Удалить это мероприятие?')) {
+                const { doc, deleteDoc } = window.fb;
+                deleteDoc(doc(window.db, "events", id)).then(() => {
+                    addNotification(`Мероприятие отменено.`, 'fa-ban');
+                });
+            }
+        }
+
+        // --- ТАЙМЕРЫ И РЕСЕТ ---
+        function updateClockAndReset() {
+            const now = new Date();
+            document.getElementById('clockTime').textContent = now.toLocaleTimeString('ru-RU');
+            document.getElementById('clockDate').textContent = now.toLocaleDateString('ru-RU', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+            
+            const todayStr = getLocalDateString();
+            
+            if (localStorage.getItem('unischolLastReset') !== todayStr) {
+                localStorage.setItem('unischolLastReset', todayStr);
+                
+                if (selectedDate !== todayStr) {
+                    selectedDate = todayStr;
+                    updateNewScheduleDate();
+                    if (document.getElementById('scheduleView').style.display === 'flex') renderProfilesGrid();
+                }
+                
+                if (selectedYptDate !== todayStr) {
+                    selectedYptDate = todayStr;
+                    renderCalendar();
+                    renderYptTasks();
+                    updateTotalTimeDisplay();
+                }
+
+                renderHomeTasks();
+                renderSchedule();
+            }
+        }
+        function updateEventCountdowns() {
+            const now = new Date().getTime();
+            eventTimers.forEach(event => {
+                const el = document.getElementById(event.id);
+                if (!el) return;
+                const distance = event.target - now;
+                if (distance <= 0) { el.innerHTML = 'Завершено'; el.className = 'event-countdown countdown-finished'; }
+                else { const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)); const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60)); el.innerHTML = `Через ${hours}ч ${minutes}м`; el.className = 'event-countdown countdown-active'; }
+            });
+        }
+
+        // --- МИНИ-ЕЖЕДНЕВНИК ---
+        function renderHomeTasks() {
+            const list = document.getElementById('plannerList');
+            if(!list) return;
+            const todayStr = getLocalDateString();
+            const todayTasks = allTasksData[todayStr] || [];
+
+            list.innerHTML = todayTasks.length === 0 ? '<li style="color: var(--text-muted); font-size: 14px; text-align: center; padding: 20px;">Задач на сегодня нет</li>' : '';
+            
+            todayTasks.sort((a, b) => a.start.localeCompare(b.start)).forEach(task => {
+                const li = document.createElement('li'); 
+                li.className = 'planner-item';
+                if (activeTimer && activeTimer.task === task.text && activeTimer.date === todayStr) li.classList.add('active-timer');
+                
+                const isActive = activeTimer && activeTimer.task === task.text && activeTimer.date === todayStr && activeTimer.startTime;
+                const pulse = isActive ? '<span class="pulse-dot"></span>' : '';
+
+                li.innerHTML = `
+                    <input type="checkbox" class="planner-checkbox" onchange="toggleTaskStatus('${todayStr}', '${task.id}')" ${task.completed ? 'checked' : ''}>
+                    <span class="planner-time">${task.start} - ${task.end}</span>
+                    <span class="planner-task ${task.completed ? 'completed' : ''}">${pulse}${task.text}</span>
+                    <button class="planner-delete" onclick="deleteTaskById('${todayStr}', '${task.id}')"><i class="fa-solid fa-trash"></i></button>
+                `;
+                list.appendChild(li);
+            });
+        }
+
+        function addTaskFromHome() {
+            const start = document.getElementById('taskStart').value; 
+            const end = document.getElementById('taskEnd').value; 
+            const text = document.getElementById('taskText').value.trim();
+            if (!start || !end || !text || start >= end) { alert('Проверьте время и текст!'); return; }
+            
+            const todayStr = getLocalDateString();
+            
+            const { collection, addDoc } = window.fb;
+            addDoc(collection(window.db, "tasks"), {
+                date: todayStr, start, end, text, completed: false
+            }).then(() => {
+                document.getElementById('taskText').value = '';
+            });
+        }
+
+        // --- ЕЖЕДНЕВНИК ---
+        let activeTimer = JSON.parse(localStorage.getItem('unischolActiveTimer')) || null; 
+        let timerInterval = null;
+        let calDate = new Date();
+
+        function initYpt() {
+            updateTimerUI();
+            if (activeTimer) startTimerLoop();
+            setInterval(() => { 
+                if (activeTimer && activeTimer.startTime) { 
+                    updateTimerUI(); 
+                    if (selectedYptDate === activeTimer.date) renderYptTasks();
+                } 
+                updateTotalTimeDisplay(); 
+            }, 1000);
+        }
+        
+        function renderCalendar() {
+            const monthYearStr = calDate.toLocaleDateString('ru-RU', { month: 'long', year: 'numeric' });
+            document.getElementById('calMonthYear').textContent = monthYearStr;
+            const grid = document.getElementById('calGrid');
+            while (grid.children.length > 7) { grid.removeChild(grid.lastChild); }
+            
+            const year = calDate.getFullYear(); const month = calDate.getMonth();
+            let firstDay = new Date(year, month, 1).getDay(); firstDay = firstDay === 0 ? 6 : firstDay - 1; 
+            const daysInMonth = new Date(year, month + 1, 0).getDate();
+            
+            const todayStr = getLocalDateString();
+
+            for (let i = 0; i < firstDay; i++) { 
+                const emptyCell = document.createElement('div'); emptyCell.className = 'cal-cell empty'; grid.appendChild(emptyCell); 
+            }
+            
+            for (let day = 1; day <= daysInMonth; day++) {
+                const cell = document.createElement('div'); 
+                cell.className = 'cal-cell';
+                const dateStr = `${year}-${(month + 1).toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`;
+                
+                if (dateStr === todayStr) cell.classList.add('today');
+                if (dateStr === selectedYptDate) cell.classList.add('selected');
+                
+                let dayTotalSec = 0;
+                if (allYptData[currentUser.name] && allYptData[currentUser.name][dateStr]) {
+                    for (let task in allYptData[currentUser.name][dateStr]) { 
+                        dayTotalSec += allYptData[currentUser.name][dateStr][task]; 
+                    }
+                }
+                
+                if (activeTimer && activeTimer.startTime && activeTimer.date === dateStr) {
+                    dayTotalSec += Math.floor((Date.now() - activeTimer.startTime) / 1000);
+                }
+
+                let timeHtml = `<div class="cal-time empty-time">0м</div>`;
+                if (dayTotalSec > 0) { timeHtml = `<div class="cal-time">${formatTimeShort(dayTotalSec)}</div>`; }
+
+                cell.innerHTML = `<div class="cal-date">${day}</div>${timeHtml}`;
+                cell.onclick = () => {
+                    selectedYptDate = dateStr;
+                    renderCalendar();
+                    renderYptTasks();
+                    updateTotalTimeDisplay();
+                };
+                grid.appendChild(cell);
+            }
+        }
+
+        function renderYptTasks() {
+            const list = document.getElementById('yptTaskList');
+            if(!list) return;
+            const tasksForDate = allTasksData[selectedYptDate] || [];
+            
+            const d = new Date(selectedYptDate);
+            const todayStr = getLocalDateString();
+            const dateLabel = selectedYptDate === todayStr ? 'Сегодня' : d.toLocaleDateString('ru-RU', { day: 'numeric', month: 'long' });
+            document.getElementById('yptSelectedDateDisplay').textContent = `Задачи на ${dateLabel}`;
+
+            list.innerHTML = tasksForDate.length === 0 ? '<li style="text-align:center; color:var(--text-muted); padding: 20px;">Нет задач на этот день</li>' : '';
+
+            tasksForDate.sort((a, b) => a.start.localeCompare(b.start)).forEach(task => {
+                let spentSec = 0;
+                if (allYptData[currentUser.name] && allYptData[currentUser.name][selectedYptDate] && allYptData[currentUser.name][selectedYptDate][task.text]) {
+                    spentSec = allYptData[currentUser.name][selectedYptDate][task.text];
+                }
+
+                if (activeTimer && activeTimer.task === task.text && activeTimer.date === selectedYptDate && activeTimer.startTime) {
+                    spentSec += Math.floor((Date.now() - activeTimer.startTime) / 1000);
+                }
+
+                const li = document.createElement('li');
+                if (activeTimer && activeTimer.task === task.text && activeTimer.date === selectedYptDate) {
+                    li.classList.add('active-task');
+                }
+
+                const isFuture = selectedYptDate > todayStr;
+                const btnDisabled = (activeTimer && (activeTimer.task !== task.text || activeTimer.date !== selectedYptDate)) || isFuture;
+
+                li.innerHTML = `
+                    <div class="task-info">
+                        <span class="task-title ${task.completed ? 'completed' : ''}">${task.text}</span>
+                        <span class="task-sub"><i class="fa-regular fa-clock"></i> ${task.start} - ${task.end} &nbsp;•&nbsp; Потрачено: <span style="color:var(--primary); font-weight:700;">${formatTimeShort(spentSec)}</span></span>
+                    </div>
+                    <div class="task-actions">
+                        <button onclick="selectTask('${selectedYptDate}', '${task.text}')" ${btnDisabled ? 'disabled' : ''}>
+                            ${activeTimer && activeTimer.task === task.text && activeTimer.date === selectedYptDate ? 'В работе' : 'Таймер'}
+                        </button>
+                        <button class="btn-del" onclick="deleteTaskById('${selectedYptDate}', '${task.id}')"><i class="fa-solid fa-trash"></i></button>
+                    </div>
+                `;
+                list.appendChild(li);
+            });
+        }
+
+        function addYptTask() {
+            const input = document.getElementById('newYptTask'); 
+            const name = input.value.trim();
+            if (!name) return;
+            
+            const { collection, addDoc } = window.fb;
+            addDoc(collection(window.db, "tasks"), {
+                date: selectedYptDate, start: '10:00', end: '11:00', text: name, completed: false
+            }).then(() => {
+                input.value = '';
+            });
+        }
+
+        function deleteTaskById(dateStr, id) {
+            if (activeTimer && activeTimer.date === dateStr) {
+                const taskToDelete = (allTasksData[dateStr] || []).find(t => t.id === id);
+                if (taskToDelete && activeTimer.task === taskToDelete.text) {
+                    alert("Сначала остановите таймер на этой задаче!");
+                    return;
+                }
+            }
+            
+            if(confirm('Удалить эту задачу?')) {
+                const { doc, deleteDoc } = window.fb;
+                deleteDoc(doc(window.db, "tasks", id));
+            }
+        }
+
+        function toggleTaskStatus(dateStr, id) {
+            const task = (allTasksData[dateStr] || []).find(t => t.id === id);
+            if (task) {
+                const { doc, updateDoc } = window.fb;
+                updateDoc(doc(window.db, "tasks", id), { completed: !task.completed });
+            }
+        }
+
+        function selectTask(dateStr, taskName) {
+            if (activeTimer) { alert("У вас уже запущен таймер! Остановите его."); return; }
+            activeTimer = { task: taskName, date: dateStr, startTime: null }; 
+            updateTimerUI();
+            renderHomeTasks();
+            renderYptTasks();
+        }
+        
+        function startTimer() {
+            if (!activeTimer) return;
+            if (!activeTimer.startTime) {
+                activeTimer.startTime = Date.now();
+                localStorage.setItem('unischolActiveTimer', JSON.stringify(activeTimer));
+                startTimerLoop(); 
+                updateTimerUI(); 
+                renderHomeTasks();
+                renderYptTasks();
+            }
+        }
+        
+        function stopTimer() {
+            if (!activeTimer || !activeTimer.startTime) return;
+            const elapsedSeconds = Math.floor((Date.now() - activeTimer.startTime) / 1000);
+            const d = activeTimer.date;
+            
+            if (!allYptData[currentUser.name]) allYptData[currentUser.name] = {};
+            if (!allYptData[currentUser.name][d]) allYptData[currentUser.name][d] = {};
+            if (!allYptData[currentUser.name][d][activeTimer.task]) allYptData[currentUser.name][d][activeTimer.task] = 0;
+            
+            allYptData[currentUser.name][d][activeTimer.task] += elapsedSeconds;
+            localStorage.setItem('unischolAllYptData', JSON.stringify(allYptData));
+            
+            activeTimer = null; 
+            localStorage.removeItem('unischolActiveTimer'); 
+            clearInterval(timerInterval);
+            
+            updateTimerUI(); 
+            renderCalendar(); 
+            renderHomeTasks();
+            renderYptTasks(); 
+            updateTotalTimeDisplay();
+        }
+        
+        function startTimerLoop() {
+            if (timerInterval) clearInterval(timerInterval);
+            timerInterval = setInterval(() => { 
+                if (activeTimer && activeTimer.startTime) { 
+                    updateTimerUI(); 
+                } 
+            }, 1000);
+        }
+        
+        function updateTimerUI() {
+            const box = document.getElementById('activeTimerBox');
+            const nameEl = document.getElementById('timerTaskName');
+            const displayEl = document.getElementById('timerDisplay');
+            const controls = document.getElementById('timerControls');
+
+            if (!activeTimer) {
+                box.classList.remove('running'); nameEl.textContent = 'Выберите задачу'; displayEl.textContent = '00:00:00';
+                controls.innerHTML = `<button class="btn-start" disabled>Старт</button>`; return;
+            }
+            nameEl.textContent = activeTimer.task + ` (${new Date(activeTimer.date).toLocaleDateString('ru-RU', {day:'numeric', month:'short'})})`;
+            if (activeTimer.startTime) {
+                box.classList.add('running');
+                const elapsed = Math.floor((Date.now() - activeTimer.startTime) / 1000);
+                displayEl.textContent = formatTime(elapsed);
+                controls.innerHTML = `<button class="btn-stop" onclick="stopTimer()">Стоп и сохранить</button>`;
+            } else {
+                box.classList.remove('running'); displayEl.textContent = '00:00:00';
+                controls.innerHTML = `<button class="btn-start" onclick="startTimer()">Запустить таймер</button>`;
+            }
+        }
+        
+        function formatTime(totalSeconds) {
+            const h = Math.floor(totalSeconds / 3600); const m = Math.floor((totalSeconds % 3600) / 60); const s = totalSeconds % 60;
+            return `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+        }
+        
+        function formatTimeShort(totalSeconds) {
+            const h = Math.floor(totalSeconds / 3600); const m = Math.floor((totalSeconds % 3600) / 60);
+            if (h === 0 && m === 0) return '0м'; return `${h > 0 ? h + 'ч ' : ''}${m}м`;
+        }
+        
+        function updateTotalTimeDisplay() {
+            let totalSeconds = 0;
+            if (allYptData[currentUser.name] && allYptData[currentUser.name][selectedYptDate]) {
+                for (let task in allYptData[currentUser.name][selectedYptDate]) { totalSeconds += allYptData[currentUser.name][selectedYptDate][task]; }
+            }
+            if (activeTimer && activeTimer.startTime && activeTimer.date === selectedYptDate) { 
+                totalSeconds += Math.floor((Date.now() - activeTimer.startTime) / 1000); 
+            }
+            document.getElementById('totalTimeDisplay').textContent = formatTimeShort(totalSeconds);
+        }
+        
+        function changeMonth(offset) { calDate.setMonth(calDate.getMonth() + offset); renderCalendar(); }
+
+        // --- КЛАСС (ЧАТ) ---
+        function initClassView() {
+            if (currentUser.role === 'teacher') {
+                currentChatClass = document.getElementById('teacherClassSelect').value;
+                document.getElementById('chatClassName').textContent = currentChatClass;
+            } else {
+                currentChatClass = currentUser.class;
+                document.getElementById('chatClassName').textContent = currentChatClass;
+                document.getElementById('teacherClassSelect').style.display = 'none';
+            }
+            renderChat();
+            renderLeaderboard();
+        }
+
+        function changeTeacherChat(className) {
+            currentChatClass = className;
+            document.getElementById('chatClassName').textContent = className;
+            renderChat();
+            renderLeaderboard();
+        }
+
+        function renderChat() {
+            const container = document.getElementById('chatMessages');
+            const msgs = chatData[currentChatClass] || [];
+            
+            if (msgs.length === 0) {
+                container.innerHTML = '<div style="text-align: center; color: var(--text-muted); margin-top: 20px; font-size: 14px;">Сообщений пока нет. Начните общение!</div>';
+                return;
+            }
+
+            container.innerHTML = msgs.map(m => {
+                const isMine = m.sender === currentUser.name;
+                return `
+                <div class="chat-msg ${isMine ? 'mine' : 'other'}">
+                    ${!isMine ? `<div class="chat-author">${m.sender}</div>` : ''}
+                    <div class="chat-bubble">${m.text}</div>
+                    <div class="chat-time">${m.time}</div>
+                </div>`;
+            }).join('');
+            
+            container.scrollTop = container.scrollHeight;
+        }
+
+        function sendChatMessage() {
+            const input = document.getElementById('chatInput');
+            const text = input.value.trim();
+            if (!text) return;
+
+            const { collection, addDoc } = window.fb;
+            addDoc(collection(window.db, "chats"), {
+                className: currentChatClass,
+                sender: currentUser.name,
+                text: text,
+                time: new Date().toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' }),
+                timestamp: Date.now()
+            }).then(() => {
+                input.value = '';
+            });
+        }
+
+        function handleChatEnter(e) {
+            if (e.key === 'Enter') sendChatMessage();
+        }
+
+        function renderLeaderboard() {
+            const list = document.getElementById('leaderboardList');
+            const classStudents = Object.values(allUsers).filter(u => u.role === 'student' && u.class === currentChatClass);
+            
+            if (classStudents.length === 0) {
+                list.innerHTML = '<li style="text-align: center; color: var(--text-muted); padding: 20px;">В этом классе пока нет учеников</li>';
+                return;
+            }
+
+            const ranked = classStudents.map(student => {
+                let totalSec = 0;
+                if (allYptData[student.name]) {
+                    for (let date in allYptData[student.name]) {
+                        for (let task in allYptData[student.name][date]) {
+                            totalSec += allYptData[student.name][date][task];
+                        }
+                    }
+                }
+                return { ...student, totalSec };
+            });
+
+            ranked.sort((a, b) => b.totalSec - a.totalSec);
+
+            list.innerHTML = ranked.map((student, index) => {
+                let rankClass = '';
+                let rankIcon = `${index + 1}`;
+                if (index === 0) { rankClass = 'top-1'; rankIcon = '<i class="fa-solid fa-crown"></i>'; }
+                if (index === 1) { rankClass = 'top-2'; rankIcon = '<i class="fa-solid fa-medal"></i>'; }
+                if (index === 2) { rankClass = 'top-3'; rankIcon = '<i class="fa-solid fa-award"></i>'; }
+
+                return `
+                <li class="lb-item ${rankClass}">
+                    <div class="lb-rank">${rankIcon}</div>
+                    <img src="${student.avatar}" class="lb-avatar">
+                    <div class="lb-info">
+                        <div class="lb-name">${student.name} ${student.name === currentUser.name ? '(Вы)' : ''}</div>
+                    </div>
+                    <div class="lb-score">${formatTimeShort(student.totalSec)}</div>
+                </li>`;
+            }).join('');
+        }
+
+        // --- НАСТРОЙКИ ---
+        let messagesData = JSON.parse(localStorage.getItem('unischolMessages')) || [];
+        function initSettings() {
+            const lang = localStorage.getItem('unischolLang') || 'ru';
+            document.getElementById('langSelect').value = lang;
+            if (currentUser.role === 'teacher') {
+                document.getElementById('studentMessageForm').style.display = 'none';
+            } else {
+                document.getElementById('studentMessageForm').style.display = 'block';
+            }
+            renderMessages();
+            initThemes();
+        }
+        function changeLanguage() {
+            const lang = document.getElementById('langSelect').value;
+            localStorage.setItem('unischolLang', lang);
+            if (lang === 'sah') {
+                alert("Якутский язык появится в ближайшем обновлении!");
+                document.getElementById('langSelect').value = 'ru';
+                localStorage.setItem('unischolLang', 'ru');
+            }
+        }
+        function sendMessage() {
+            const text = document.getElementById('messageText').value.trim();
+            if (!text) return;
+            const newMsg = { id: Date.now(), studentName: currentUser.name, text: text, date: new Date().toLocaleString('ru-RU', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' }), reply: null, repliedBy: null };
+            messagesData.push(newMsg); localStorage.setItem('unischolMessages', JSON.stringify(messagesData));
+            document.getElementById('messageText').value = ''; renderMessages(); addNotification(`Отправлено новое обращение учителю.`, 'fa-paper-plane');
+        }
+        function renderMessages() {
+            const container = document.getElementById('messagesList');
+            if (messagesData.length === 0) { container.innerHTML = '<p style="color: var(--text-muted); font-size: 14px;">Обращений пока нет.</p>'; return; }
+            let displayMessages = messagesData;
+            if (currentUser.role === 'student') { displayMessages = messagesData.filter(m => m.studentName === currentUser.name); }
+            if (displayMessages.length === 0) { container.innerHTML = '<p style="color: var(--text-muted); font-size: 14px;">Вы еще не отправляли обращений.</p>'; return; }
+            container.innerHTML = displayMessages.map(m => `
+                <div class="msg-card">
+                    <div class="msg-header"><span><b>${m.studentName}</b> (Ученик)</span><span>${m.date}</span></div>
+                    <div class="msg-text">${m.text}</div>
+                    ${m.reply ? `<div class="msg-reply"><div style="font-size: 12px; font-weight: 700; margin-bottom: 6px; color: var(--primary);">Ответ (${m.repliedBy}):</div>${m.reply}</div>` : ''}
+                    ${currentUser.role === 'teacher' && !m.reply ? `<div class="reply-form"><input type="text" id="reply-input-${m.id}" placeholder="Написать ответ..."><button onclick="replyToMessage(${m.id})">Ответить</button></div>` : ''}
+                </div>
+            `).join('');
+        }
+        function replyToMessage(id) {
+            const input = document.getElementById(`reply-input-${id}`);
+            const text = input.value.trim(); if (!text) return;
+            messagesData = messagesData.map(m => { if (m.id === id) { m.reply = text; m.repliedBy = currentUser.name; } return m; });
+            localStorage.setItem('unischolMessages', JSON.stringify(messagesData));
+            renderMessages(); addNotification(`Учитель ${currentUser.name} ответил на обращение.`, 'fa-reply');
+        }
+
+        // --- ПЕРЕКЛЮЧЕНИЕ ВКЛАДОК ---
+        const navHome = document.getElementById('navHome');
+        const navScheduleNew = document.getElementById('navScheduleNew');
+        const navClass = document.getElementById('navClass');
+        const navYpt = document.getElementById('navYpt');
+        const navEvents = document.getElementById('navEvents');
+        const navSettings = document.getElementById('navSettings');
+        
+        const dashboardView = document.getElementById('dashboardView');
+        const scheduleView = document.getElementById('scheduleView');
+        const classView = document.getElementById('classView');
+        const yptView = document.getElementById('yptView');
+        const allEventsView = document.getElementById('allEventsView');
+        const settingsView = document.getElementById('settingsView');
+
+        function setActiveTab(activeLink) { document.querySelectorAll('.nav-link').forEach(link => link.classList.remove('active')); activeLink.classList.add('active'); }
+        
+        function hideAllViews() { 
+            dashboardView.style.display = 'none'; scheduleView.style.display = 'none'; classView.style.display = 'none'; 
+            yptView.style.display = 'none'; allEventsView.style.display = 'none'; settingsView.style.display = 'none'; 
+        }
+
+        navHome.addEventListener('click', (e) => { e.preventDefault(); setActiveTab(navHome); hideAllViews(); dashboardView.style.display = 'grid'; renderEvents(); renderHomeTasks(); });
+        
+        navScheduleNew.addEventListener('click', (e) => { 
+            e.preventDefault(); setActiveTab(navScheduleNew); hideAllViews(); scheduleView.style.display = 'flex'; 
+            renderProfilesGrid(); updateNewScheduleDate();
+        });
+
+        navClass.addEventListener('click', (e) => { e.preventDefault(); setActiveTab(navClass); hideAllViews(); classView.style.display = 'grid'; initClassView(); });
+        
+        navYpt.addEventListener('click', (e) => { 
+            e.preventDefault(); setActiveTab(navYpt); hideAllViews(); yptView.style.display = 'grid'; 
+            renderCalendar(); updateTotalTimeDisplay(); renderYptTasks(); 
+        });
+
+        navEvents.addEventListener('click', (e) => { e.preventDefault(); setActiveTab(navEvents); hideAllViews(); allEventsView.style.display = 'grid'; renderFullEvents(); });
+        navSettings.addEventListener('click', (e) => { e.preventDefault(); setActiveTab(navSettings); hideAllViews(); settingsView.style.display = 'grid'; initSettings(); });
+
+        // --- ИНИЦИАЛИЗАЦИЯ ---
+        setInterval(() => { updateClockAndReset(); updateEventCountdowns(); }, 1000);
+    </script>
+</body>
+</html>
+```
